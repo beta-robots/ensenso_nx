@@ -46,10 +46,40 @@ void Device::configureCapture(const CaptureParams & _params)
     _params.print(); 
 }
 
-void Device::capture()
+void Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 {
+    int ww, hh;
+    std::vector<float> raw_points;
+    
+    // Capture images
+    NxLibCommand (cmdCapture).execute();
+    
+    // Compute Disparity Map
+    NxLibCommand (cmdComputeDisparityMap).execute();
+    
+    // Compute Point Cloud
+    NxLibCommand (cmdComputePointMap).execute();
+
+    // Get image dimensions
+    camera_[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
+    
+    //Get 3D image raw data 
+    camera_[itmImages][itmPointMap].getBinaryData(raw_points, 0);
+ 
+    //Move raw data to point cloud
+    _p_cloud.width = (unsigned int)ww;
+    _p_cloud.height = (unsigned int)hh;
+    _p_cloud.resize(_p_cloud.width*_p_cloud.height);
+    for(unsigned int ii = 0; ii<_p_cloud.height; ii++ )
+    {
+        for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
+        {
+            _p_cloud.points.at(ii*_p_cloud.width + jj).x = raw_points[(ii*_p_cloud.width + jj)*3];
+            _p_cloud.points.at(ii*_p_cloud.width + jj).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1];
+            _p_cloud.points.at(ii*_p_cloud.width + jj).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2];
+        }
+    }
     
 }
-
 
 }//close namespace

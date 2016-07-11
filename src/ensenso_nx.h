@@ -4,6 +4,10 @@
 //Ensenso Nx Lib
 #include "nxLib.h"
 
+//PCL
+#include <pcl/point_types.h>
+#include <pcl/io/pcd_io.h>
+
 //std
 #include <iostream>
 
@@ -59,16 +63,6 @@ class Device
         **/
         ~Device(); 
         
-        /** \brief Open a connection with the device
-         * Open a connection with the device
-        **/
-        //void open(); 
-        
-        /** \brief Close the current connection with the device
-         * Close the current connection with the device
-        **/
-        void close(); 
-
         /** \brief Set configuration for point cloud acquisition
          * Set configuration for point cloud acquisition
          * \param _params: capture parameters 
@@ -78,7 +72,7 @@ class Device
         /** \brief Get a point cloud from the device
          * Get a point cloud from the device
         **/
-        void capture();
+        void capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud);
         
 }; //end class
 
