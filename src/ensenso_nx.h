@@ -16,7 +16,7 @@ struct DeviceParams
     std::string model_name_; 
     unsigned int sn_; 
     
-    void print()
+    void print() const
     {
         std::cout << "\tIP address: \t" << ip_address_ << std::endl;
         std::cout << "\tModel: \t" << model_name_ << std::endl;
@@ -30,7 +30,7 @@ struct CaptureParams
     bool auto_exposure_;
     double exposure_time_; //in useconds
     
-    void print()
+    void print() const
     {
         std::cout << "\tauto exposure [t/f]: \t" << auto_exposure_ << std::endl;
         std::cout << "\texposure [us]: \t" << exposure_time_ << std::endl;
@@ -41,8 +41,12 @@ struct CaptureParams
 class Device
 {
     protected: 
+        
         DeviceParams device_params_; //params related to device operations      
         CaptureParams capture_params_; //params related to point cloud acquisition
+        
+        NxLibItem nx_lib_root_; // Reference to the API tree root 
+        NxLibItem camera_; //Reference to the nxlib camera device
 
     public: 
         /** \brief Constructor
@@ -58,7 +62,7 @@ class Device
         /** \brief Open a connection with the device
          * Open a connection with the device
         **/
-        void open(); 
+        //void open(); 
         
         /** \brief Close the current connection with the device
          * Close the current connection with the device

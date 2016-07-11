@@ -64,10 +64,13 @@ message(STATUS "Ensenso Libraries found at ${ENSENSO_LIBRARIES}.")
 include_directories(src/ ${catkin_INCLUDE_DIRS})
 
 # Set source files 
-SET(SRCS 
+SET(SRCS_LIB
     src/ensenso_nx.cpp
-    src/ensenso_nx_node.cpp
-    src/ensenso_nx_node_main.cpp
+)
+
+SET(SRCS_NODE
+#     src/ensenso_nx_node.cpp
+#     src/ensenso_nx_node_main.cpp
 )
         
 # add_service_files(
@@ -97,11 +100,15 @@ catkin_package(
         pcl_conversions
 )
 
+#Build library (TODO: Should call a CMakeLists.txt at src/lib/)
+ADD_LIBRARY(${PROJECT_NAME}_LIB SHARED ${SRCS_LIB})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
+
 #Build executable
-ADD_EXECUTABLE(${PROJECT_NAME} ${SRCS})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp ${PROJECT_NAME}_gencfg)
+# ADD_EXECUTABLE(${PROJECT_NAME} ${SRCS_NODE} ${SRCS_LIB})
+# TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
+# add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp ${PROJECT_NAME}_gencfg)
 
 #Build examples
-ADD_SUBDIRECTORY(src/examples)
+#ADD_SUBDIRECTORY(src/examples)
 
