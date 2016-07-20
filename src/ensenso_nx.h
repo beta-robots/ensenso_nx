@@ -16,15 +16,15 @@ namespace EnsensoNx
 
 struct DeviceParams
 {
-    std::string ip_address_;    
-    std::string model_name_; 
-    unsigned int sn_; 
+//     std::string ip_address_;    
+//     std::string model_name_; 
+    std::string serial_num_; 
     
     void print() const
     {
-        std::cout << "\tIP address: \t" << ip_address_ << std::endl;
-        std::cout << "\tModel: \t" << model_name_ << std::endl;
-        std::cout << "\tSN: \t" << sn_ << std::endl;    
+//         std::cout << "\tIP address: \t" << ip_address_ << std::endl;
+//         std::cout << "\tModel: \t" << model_name_ << std::endl;
+        std::cout << "\tSN: \t" << serial_num_ << std::endl;    
     }
 };
 
@@ -56,7 +56,7 @@ class Device
         /** \brief Constructor
          * Constructor
         **/
-        Device(const DeviceParams & _params); 
+        Device(); 
 
         /** \brief Destructor
          * Destructor

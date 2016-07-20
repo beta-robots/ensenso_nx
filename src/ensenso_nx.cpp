@@ -3,7 +3,7 @@
 namespace EnsensoNx
 {
 
-Device::Device(const DeviceParams & _params)
+Device::Device()
 {
     //init nx library
     nxLibInitialize(true);
@@ -17,13 +17,13 @@ Device::Device(const DeviceParams & _params)
     }
 
     //get serial number of the connected camera
-    std::string serial_num = camera_[itmSerialNumber].asString();
+    device_params_.serial_num_ = camera_[itmSerialNumber].asString();
     
     //open camera
     NxLibCommand open(cmdOpen); // When calling the 'execute' method in this object, it will synchronously execute the command 'cmdOpen'
-    open.parameters()[itmCameras] = serial_num; // Set parameters for the open command
+    open.parameters()[itmCameras] = device_params_.serial_num_; // Set parameters for the open command
     open.execute();
-    std::cout << "EnsensoNx::Device: Camera open. SN: " << serial_num << std::endl; 
+    std::cout << "EnsensoNx::Device: Camera open. SN: " << device_params_.serial_num_ << std::endl; 
 
 }
 
