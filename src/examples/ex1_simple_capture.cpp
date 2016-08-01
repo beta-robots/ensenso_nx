@@ -6,16 +6,19 @@
 //EnsensoNx Lib
 #include "../ensenso_nx.h"
 
+//std
+#include <iostream>
+
 //main
 int main(int argc, char **argv)
 {
-    //gocator camera
-    EnsensoNx::Device camera();
+    //ensenso camera
+    EnsensoNx::Device camera;
     
-    //configure camera (exposure and spacing)
+    //configure camera (auto exposure and exposure time)
     EnsensoNx::CaptureParams capture_params;
     capture_params.auto_exposure_ = false; 
-    capture_params.exposure_time_ = 31000; //useconds
+    capture_params.exposure_time_ = 10; //ms
     camera.configureCapture(capture_params);
     
     //point cloud
@@ -26,9 +29,9 @@ int main(int argc, char **argv)
     
     //get a single snapshot in this thread
     camera.capture(*p_cloud_);
-
-    //Just check point cloud dimensions
-    std::cout << "p_cloud_ size is: " << p_cloud_->width << std::endl; 
+    std::cout << "Cloud captured! " << std::endl; 
+    std::cout << "\twidth: " << p_cloud_->width << std::endl;
+    std::cout << "\theight: " << p_cloud_->height << std::endl; 
     
     //visualization starts here
     pcl::visualization::PointCloudColorHandlerCustom<pcl::PointXYZ> p_cloud_color_handler(p_cloud_, 255, 255, 255);

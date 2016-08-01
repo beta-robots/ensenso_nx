@@ -110,5 +110,5 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBR
 # add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp ${PROJECT_NAME}_gencfg)
 
 #Build examples
-#ADD_SUBDIRECTORY(src/examples)
+ADD_SUBDIRECTORY(src/examples)
 

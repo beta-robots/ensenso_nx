@@ -10,6 +10,7 @@ The package has been tested with the following dependencies:
 * [ROS Indigo](http://wiki.ros.org/indigo/Installation/Ubuntu)
 * [Point Cloud Library v1.7](http://www.pointclouds.org/) (shipped with ROS Indigo)
 * Ensenso SDK (propietary library from manufacturer IDS)
+* UEYE driver 
 
 To install Ensenso SDK dependency, the following steps are required: 
 
@@ -19,8 +20,25 @@ To install Ensenso SDK dependency, the following steps are required:
 $ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
 ```
 
+You also need the ueye driver and tools:
+1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.80.2_Linux_64.tgz)
+2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
+```shell 
+$ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
+```
+
 ### Download
 ```shell
 $ git clone https://github.com/beta-robots/ensenso_nx.git
 ```
+
+### Build
+```shell
+$ catkin_make --only-pkg-with-deps ensenso_nx
+```
+
+### Camera IP config
+to do ...
+
+
 

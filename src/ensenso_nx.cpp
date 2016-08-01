@@ -6,7 +6,9 @@ namespace EnsensoNx
 Device::Device()
 {
     //init nx library
+std::cout << __LINE__ << std::endl; 
     nxLibInitialize(true);
+std::cout << __LINE__ << std::endl; 
 
     // Create an object referencing the camera's tree item, for easier access:
     camera_ = nx_lib_root_[itmCameras][itmBySerialNo][0];
@@ -39,9 +41,15 @@ Device::~Device()
 
 void Device::configureCapture(const CaptureParams & _params)
 {
+    //update class member
+    capture_params_.auto_exposure_ = _params.auto_exposure_;
+    capture_params_.exposure_time_ = _params.exposure_time_;
+    
     //sets capture configuration to the camera
-    camera_[itmParameters][itmCapture][itmAutoExposure] = _params.auto_exposure_;
-    camera_[itmParameters][itmCapture][itmExposure    ] = _params.exposure_time_;
+    camera_[itmParameters][itmCapture][itmAutoExposure] = capture_params_.auto_exposure_;
+    camera_[itmParameters][itmCapture][itmExposure    ] = capture_params_.exposure_time_;
+    
+    //print out
     std::cout << "EnsensoNx::Device: Capture params set to:" << std::endl; 
     _params.print(); 
 }
