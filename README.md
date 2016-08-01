@@ -21,24 +21,34 @@ $ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
 ```
 
 You also need the ueye driver and tools:
+
 1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.80.2_Linux_64.tgz)
 2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
 ```shell 
 $ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
 ```
 
-### Download
+### Download and Build This ROS package
+Download with:
 ```shell
 $ git clone https://github.com/beta-robots/ensenso_nx.git
 ```
-
-### Build
+and from your ROS workspace, build it with:
 ```shell
 $ catkin_make --only-pkg-with-deps ensenso_nx
 ```
 
-### Camera IP config
-to do ...
+### Camera Operation
+Start the ueye driver:
+```shell
+$ sudo /etc/init.d/ueyeethdrc start
+```
+Check the camera is there with the IDS application nxView
+```shell
+$ nxView
+```
+
+
 
 
 

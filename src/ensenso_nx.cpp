@@ -5,10 +5,10 @@ namespace EnsensoNx
 
 Device::Device()
 {
+    std::cout << "EnsensoNx::Device: Opening camera ..." << std::endl;
+    
     //init nx library
-std::cout << __LINE__ << std::endl; 
     nxLibInitialize(true);
-std::cout << __LINE__ << std::endl; 
 
     // Create an object referencing the camera's tree item, for easier access:
     camera_ = nx_lib_root_[itmCameras][itmBySerialNo][0];
@@ -32,6 +32,7 @@ std::cout << __LINE__ << std::endl;
 Device::~Device()
 {
     //close the camera
+    std::cout << "EnsensoNx::Device: Closing camera ..." << std::endl; 
     NxLibCommand (cmdClose).execute();
     std::cout << "EnsensoNx::Device: Camera closed." << std::endl; 
     
@@ -57,6 +58,7 @@ void Device::configureCapture(const CaptureParams & _params)
 void Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 {
     int ww, hh;
+    float px; 
     std::vector<float> raw_points;
     
     // Capture images
@@ -78,16 +80,24 @@ void Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     _p_cloud.width = (unsigned int)ww;
     _p_cloud.height = (unsigned int)hh;
     _p_cloud.resize(_p_cloud.width*_p_cloud.height);
+    unsigned int kk = 0; 
     for(unsigned int ii = 0; ii<_p_cloud.height; ii++ )
     {
         for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
         {
-            _p_cloud.points.at(ii*_p_cloud.width + jj).x = raw_points[(ii*_p_cloud.width + jj)*3];
-            _p_cloud.points.at(ii*_p_cloud.width + jj).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1];
-            _p_cloud.points.at(ii*_p_cloud.width + jj).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2];
+            px = raw_points[(ii*_p_cloud.width + jj)*3]; 
+            if ( !isnan(px) && !isinf(px) ) 
+            {
+                   _p_cloud.points.at(kk).x = px;
+                   _p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1];
+                   _p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2];
+                   kk++; 
+            }
         }
     }
     
+    //resize with number valid points
+    _p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
 }
 
 }//close namespace
