@@ -46,16 +46,27 @@ void Device::configureCapture(const CaptureParams & _params)
     capture_params_.auto_exposure_ = _params.auto_exposure_;
     capture_params_.exposure_time_ = _params.exposure_time_;
     
-    //sets capture configuration to the camera
-    camera_[itmParameters][itmCapture][itmAutoExposure] = capture_params_.auto_exposure_;
-    camera_[itmParameters][itmCapture][itmExposure    ] = capture_params_.exposure_time_;
-    
-    //print out
-    std::cout << "EnsensoNx::Device: Capture params set to:" << std::endl; 
-    _params.print(); 
+    //call protected member to set the configuration to the camera
+    this->configureCapture(); 
 }
 
-void Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
+void Device::configureExposure(unsigned int _exposure)
+{
+    if (_exposure == 0) //autoexposure case
+    {
+        capture_params_.auto_exposure_ = true; 
+    }
+    else //manual exposure case
+    {
+        capture_params_.auto_exposure_ = false;
+        capture_params_.exposure_time_ = _exposure; 
+    }
+    
+    //call protected member to set the configuration to the camera
+    this->configureCapture(); 
+}
+
+int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 {
     int ww, hh;
     float px; 
@@ -98,6 +109,22 @@ void Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     
     //resize with number valid points
     _p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
+    
+    //return success
+    return 1; 
+}
+
+//PROTECTED METHODS
+
+void Device::configureCapture()
+{
+    //sets capture configuration to the camera
+    camera_[itmParameters][itmCapture][itmAutoExposure] = capture_params_.auto_exposure_;
+    camera_[itmParameters][itmCapture][itmExposure    ] = capture_params_.exposure_time_;
+    
+    //print out
+    std::cout << "EnsensoNx::Device: Capture params set to:" << std::endl; 
+    capture_params_.print();   
 }
 
 }//close namespace

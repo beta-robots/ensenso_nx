@@ -33,7 +33,7 @@ struct DeviceParams
 struct CaptureParams
 {
     bool auto_exposure_;
-    double exposure_time_; //in useconds
+    double exposure_time_; //in microseconds
     
     void print() const
     {
@@ -64,16 +64,31 @@ class Device
         **/
         ~Device(); 
         
-        /** \brief Set configuration for point cloud acquisition
-         * Set configuration for point cloud acquisition
+        /** \brief Set configuration for point cloud capture
+         * Set configuration for point cloud capture
          * \param _params: capture parameters 
         **/
         void configureCapture(const CaptureParams & _params);
         
+        /** \brief Set exposure in microseconds
+         * Set exposure in microseconds
+         * \param _exposure: exposure in milliseconds, a value of 0 indicates autoexposure
+        **/
+        void configureExposure(unsigned int _exposure);
+        
         /** \brief Get a point cloud from the device
          * Get a point cloud from the device
+         * \param _p_cloud: a point cloud where the capture data will be placed
+         * \return 1 if ok, -1 if not. TODO
         **/
-        void capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud);
+        int capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud);
+        
+    protected:
+        /** \brief Hardware set configuration
+         * Hardware set configuration
+         * \param _params: capture parameters 
+        **/        
+        void configureCapture(); 
         
 }; //end class
 
