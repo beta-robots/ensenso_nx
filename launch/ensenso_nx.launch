@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+
+<!-- Launches ensenso_nx capture node, and visualization according rviz param  -->
+
+<launch>
+
+    <!-- User Args  -->
+    <arg name="rviz" default="true" doc="rviz visualization or not"/>
+
+    <!-- ensenso_nx node -->
+    <node   
+        pkg="ensenso_nx"
+        type="ensenso_nx"
+        name="ensenso_nx"
+        output="screen">
+    </node>      
+    
+    <!--visualization-->
+    <group if="$(arg rviz)">
+        <node 
+            name="rviz"
+            pkg="rviz"
+            type="rviz" 
+            args="-d $(find ensenso_nx)/rviz/ensenso_nx.rviz">
+        </node>
+    </group>
+    
+</launch>
+
