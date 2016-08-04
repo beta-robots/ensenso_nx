@@ -102,6 +102,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        lens_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        lens_right:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         world:
           Alpha: 1
           Show Axes: false
@@ -123,6 +133,10 @@ Visualization Manager:
           Value: true
         gpio:
           Value: true
+        lens_left:
+          Value: true
+        lens_right:
+          Value: true
         world:
           Value: true
       Marker Scale: 0.1
@@ -136,6 +150,10 @@ Visualization Manager:
             ethernet:
               {}
             gpio:
+              {}
+            lens_left:
+              {}
+            lens_right:
               {}
       Update Interval: 0
       Value: true
@@ -163,22 +181,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.29112
+      Distance: 0.665196
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0410082
-        Y: -0.0622195
-        Z: 0.0237894
+        X: 0.0197147
+        Y: 0.00793364
+        Z: 0.095279
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.605201
+      Pitch: 0.424796
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 5.51047
+      Yaw: 4.97356
     Saved: ~
 Window Geometry:
   Displays:

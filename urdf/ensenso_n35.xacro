@@ -7,10 +7,13 @@
         <color rgba="0.1 0.1 1.0 0.9"/>
     </material>
     <material name="Ensenso/Grey">
-        <color rgba="0.3 0.3 0.3 0.9"/>
+        <color rgba="0.4 0.4 0.4 0.9"/>
     </material>
     <material name="Ensenso/Black">
         <color rgba="0.05 0.05 0.05 0.9"/>
+    </material>
+    <material name="Ensenso/White">
+        <color rgba="0.9 0.9 0.9 0.6"/>
     </material>
     
     <!-- Set origin link -->
@@ -25,7 +28,7 @@
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="0.2 0.05 0.05"/>
+                <box size="0.175 0.050 0.052"/>
                 <!-- <mesh filename="package://ensenso_nx/urdf/xxx.stl" scale="0.001 0.001 0.001"/> -->
             </geometry>
             <material name="Ensenso/Blue"/>
@@ -33,7 +36,7 @@
         <collision>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="0.2 0.05 0.05"/>
+                <box size="0.175 0.050 0.052"/>
             </geometry>
         </collision>
     </link>
@@ -79,6 +82,75 @@
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
                 <box size="0.02 0.01 0.02"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Lens left -->
+    <joint name="$ensenso_camera_lens_left" type="fixed" >
+        <parent link="ensenso_camera"/>
+        <child link="lens_left"/>
+        <origin xyz="-0.05 0.0 0.026" rpy="0.0 0.0 0.0"/>  
+    </joint>       
+    <link name="lens_left">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.001" radius="0.015"/>
+                <!-- <mesh filename="package://ensenso_nx/urdf/xxx.stl" scale="0.001 0.001 0.001"/> -->
+            </geometry>
+            <material name="Ensenso/White"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.001" radius="0.015"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!-- Lens right -->
+    <joint name="$ensenso_camera_lens_right" type="fixed" >
+        <parent link="ensenso_camera"/>
+        <child link="lens_right"/>
+        <origin xyz="0.05 0.0 0.026" rpy="0.0 0.0 0.0"/>  
+    </joint>       
+    <link name="lens_right">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.001" radius="0.015"/>
+                <!-- <mesh filename="package://ensenso_nx/urdf/xxx.stl" scale="0.001 0.001 0.001"/> -->
+            </geometry>
+            <material name="Ensenso/White"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.001" radius="0.015"/>
+            </geometry>
+        </collision>
+    </link>
+    
+    <!-- Emitter -->
+    <joint name="$ensenso_camera_emitter" type="fixed" >
+        <parent link="ensenso_camera"/>
+        <child link="emitter"/>
+        <origin xyz="0.0 0.0 0.026" rpy="0.0 0.0 0.0"/>  
+    </joint>       
+    <link name="emitter">
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.001" radius="0.022"/>
+                <!-- <mesh filename="package://ensenso_nx/urdf/xxx.stl" scale="0.001 0.001 0.001"/> -->
+            </geometry>
+            <material name="Ensenso/White"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <cylinder length="0.001" radius="0.015"/>
             </geometry>
         </collision>
     </link>

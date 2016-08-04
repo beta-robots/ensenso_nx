@@ -71,6 +71,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     int ww, hh;
     float px; 
     std::vector<float> raw_points;
+    int nx_return_code; 
     
     // Capture images
     NxLibCommand (cmdCapture).execute();
@@ -85,8 +86,8 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     camera_[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
     
     //Get 3D image raw data 
-    camera_[itmImages][itmPointMap].getBinaryData(raw_points, 0);
- 
+    camera_[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points, 0);
+     
     //Move raw data to point cloud
     _p_cloud.width = (unsigned int)ww;
     _p_cloud.height = (unsigned int)hh;
@@ -97,18 +98,27 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
         for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
         {
             px = raw_points[(ii*_p_cloud.width + jj)*3]; 
-            if ( !isnan(px) && !isinf(px) ) 
+            if ( !isnan(px) ) 
             {
-                   _p_cloud.points.at(kk).x = px;
-                   _p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1];
-                   _p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2];
-                   kk++; 
+                _p_cloud.points.at(kk).x = px/1000.;
+                _p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
+                _p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
+                kk++; 
             }
         }
     }
     
     //resize with number valid points
     _p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
+    
+    //debug message
+    std::cout << "Cloud capture: " << std::endl <<
+                 "\treturn code: " << nx_return_code << std::endl <<
+                 "\tnum points: " << raw_points.size()/3 << std::endl <<
+                 "\twidth: " << ww << std::endl <<
+                 "\theight: " << hh << std::endl <<
+                 "\tkk: " << kk << std::endl; 
+    
     
     //return success
     return 1; 
