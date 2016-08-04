@@ -4,8 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /Global Options1
-        - /PointCloud21
+        - /TF1
       Splitter Ratio: 0.5
     Tree Height: 723
   - Class: rviz/Selection
@@ -31,7 +30,7 @@ Visualization Manager:
   Class: ""
   Displays:
     - Alpha: 0.5
-      Cell Size: 1
+      Cell Size: 0.1
       Class: rviz/Grid
       Color: 160; 160; 164
       Enabled: true
@@ -78,11 +77,73 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Alpha: 1
+      Class: rviz/RobotModel
+      Collision Enabled: false
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        ensenso_camera:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        ethernet:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        gpio:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        world:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Name: EnsensoN35
+      Robot Description: robot_description
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        ensenso_camera:
+          Value: true
+        ethernet:
+          Value: true
+        gpio:
+          Value: true
+        world:
+          Value: true
+      Marker Scale: 0.1
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        world:
+          ensenso_camera:
+            ethernet:
+              {}
+            gpio:
+              {}
+      Update Interval: 0
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
     Fixed Frame: ensenso_camera
-    Frame Rate: 30
+    Frame Rate: 10
   Name: root
   Tools:
     - Class: rviz/Interact
@@ -102,22 +163,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.81472
+      Distance: 0.29112
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.393602
-        Y: 0.511733
-        Z: -0.640169
+        X: 0.0410082
+        Y: -0.0622195
+        Z: 0.0237894
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.785398
+      Pitch: 0.605201
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.785398
+      Yaw: 5.51047
     Saved: ~
 Window Geometry:
   Displays:
