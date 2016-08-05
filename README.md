@@ -9,23 +9,23 @@ The package has been tested with the following dependencies:
 * CMake + gcc
 * [ROS Indigo](http://wiki.ros.org/indigo/Installation/Ubuntu)
 * [Point Cloud Library v1.7](http://www.pointclouds.org/) (shipped with ROS Indigo)
+* UEYE driver (camera interface from manufacturer IDS)
 * Ensenso SDK (propietary library from manufacturer IDS)
-* UEYE driver 
 
-To install Ensenso SDK dependency, the following steps are required: 
-
-1. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file EnsensoSDK-1.3.180-x64.deb)
-2. Install it with
-```shell 
-$ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
-```
-
-You also need the ueye driver and tools:
+To install the ueye driver and tools:
 
 1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.80.2_Linux_64.tgz)
 2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
 ```shell 
 $ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
+```
+
+To install Ensenso SDK dependency:
+
+1. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file EnsensoSDK-1.3.180-x64.deb)
+2. Install it with
+```shell 
+$ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
 ```
 
 ### Download and Build This ROS package
@@ -47,6 +47,15 @@ Check the camera is there with the IDS application nxView
 ```shell
 $ nxView
 ```
+Run the node (by default a rviz window will appear)
+```shell
+$ roslaunch ensenso_nx ensenso_nx.launch 
+```
+From another terminal request a Point Cloud capture with a given exposure value: 
+```shell
+$ rosservice call /ensenso_server "exposure: 30"
+```
+
 
 
 

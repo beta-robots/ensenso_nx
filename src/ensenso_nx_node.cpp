@@ -65,13 +65,13 @@ bool EnsensoNxNode::pointCloudServiceCallback(ensenso_nx::PointCloudAsService::R
                                               ensenso_nx::PointCloudAsService::Response & _reply)
 {
     //set the exposure 
-    camera_->configureExposure((unsigned int)_request.exposure.data);
+    camera_->configureExposure((unsigned int)_request.exposure);
     
     //call capture and publish point cloud
     this->publish();
     
     //set the reply
-    _reply.size.data = cloud_.size(); 
+    _reply.size = cloud_.size(); 
     
     //return
     return true; 

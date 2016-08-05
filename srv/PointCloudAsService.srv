@@ -2,9 +2,9 @@
 
 #Request by indicating the expopsure in milliseconds. 
 #0 indicates autoexposure
-std_msgs/UInt32 exposure
+uint32 exposure
 
 ---
 
 #Reply with the size of the captured point cloud
-std_msgs/UInt32 size
+uint32 size

@@ -3,8 +3,7 @@ Panels:
     Help Height: 78
     Name: Displays
     Property Tree Widget:
-      Expanded:
-        - /TF1
+      Expanded: ~
       Splitter Ratio: 0.5
     Tree Height: 723
   - Class: rviz/Selection
@@ -25,7 +24,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: ""
+    SyncSource: PointCloud2
 Visualization Manager:
   Class: ""
   Displays:
@@ -50,14 +49,14 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: -10
+        Max Value: 1.77365
+        Min Value: 0.900848
         Value: true
       Axis: Z
       Channel Name: intensity
       Class: rviz/PointCloud2
       Color: 255; 255; 255
-      Color Transformer: ""
+      Color Transformer: AxisColor
       Decay Time: 0
       Enabled: true
       Invert Rainbow: false
@@ -66,12 +65,12 @@ Visualization Manager:
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: PointCloud2
-      Position Transformer: ""
+      Position Transformer: XYZ
       Queue Size: 10
       Selectable: true
       Size (Pixels): 3
       Size (m): 0.001
-      Style: Flat Squares
+      Style: Points
       Topic: /ensenso_cloud
       Unreliable: false
       Use Fixed Frame: true
@@ -87,6 +86,11 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        emitter:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         ensenso_camera:
           Alpha: 1
           Show Axes: false
@@ -127,6 +131,8 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
+        emitter:
+          Value: true
         ensenso_camera:
           Value: true
         ethernet:
@@ -147,6 +153,8 @@ Visualization Manager:
       Tree:
         world:
           ensenso_camera:
+            emitter:
+              {}
             ethernet:
               {}
             gpio:
@@ -181,22 +189,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.665196
+      Distance: 2.18592
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0197147
-        Y: 0.00793364
-        Z: 0.095279
+        X: 0.0814199
+        Y: 0.208345
+        Z: 1.43441
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.424796
+      Pitch: -1.27476
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 4.97356
+      Yaw: -1.97215
     Saved: ~
 Window Geometry:
   Displays:
