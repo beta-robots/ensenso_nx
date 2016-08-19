@@ -98,7 +98,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
         for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
         {
             px = raw_points[(ii*_p_cloud.width + jj)*3]; 
-            if ( !isnan(px) ) 
+            if ( !std::isnan(px) )
             {
                 _p_cloud.points.at(kk).x = px/1000.;
                 _p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
