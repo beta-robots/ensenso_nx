@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="single_ensenso_n35">
+
+	<xacro:include filename="$(find ensenso_nx)/urdf/ensenso_n35.urdf.xacro" />
+
+    <!-- Set origin link -->
+    <link name="world"/>
+
+    <xacro:ensenso_n35 name="single_ensenso_n35" parent="world">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+    </xacro:ensenso_n35>
+
+</robot>
