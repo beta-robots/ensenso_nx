@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="ensenso_nx">
+
+    <!-- Colors -->
+    <material name="Ensenso/Blue">
+        <color rgba="0.1 0.1 1.0 1.0"/>
+    </material>
+    <material name="Ensenso/Grey">
+        <color rgba="0.4 0.4 0.4 1.0"/>
+    </material>
+    <material name="Ensenso/Black">
+        <color rgba="0.05 0.05 0.05 1.0"/>
+    </material>
+    <material name="Ensenso/White">
+        <color rgba="0.9 0.9 0.9 0.6"/>
+    </material>
+
+    <xacro:macro name="ensenso_n35" params="name parent *origin">
+
+        <!-- The Ensenso N35 camera -->
+        <joint name="${parent}_${name}_joint" type="fixed">
+            <xacro:insert_block name="origin"/>
+            <parent link="${parent}" />
+            <child link="${name}_body" />
+        </joint>
+        <link name="${name}_body">
+            <visual>
+                <origin xyz="0.0875 -0.025 -0.026" rpy="0 0 0"/>
+                <geometry>
+                    <mesh filename="package://ensenso_nx/urdf/meshes/N30-602-16.stl" scale="0.001 0.001 0.001"/>
+                </geometry>
+                <material name="Ensenso/Blue"/>
+            </visual>
+            <collision>
+                <origin xyz="0.01 0 0.01" rpy="0 0 0"/>
+                <geometry>
+                    <!-- box size="0.175 0.050 0.052"/ -->
+                    <box size="0.220 0.1 0.1"/>
+                </geometry>
+            </collision>
+        </link>
+
+        <!-- Useful reference frames -->
+
+        <!-- Lens left -->
+        <joint name="${name}_lens_left_joint" type="fixed">
+            <parent link="${name}_body"/>
+            <child link="${name}_lens_left"/>
+            <origin xyz="-0.05 0.0 0.026" rpy="0.0 0.0 0.0"/>
+        </joint>
+        <link name="${name}_lens_left">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.001" radius="0.015"/>
+                </geometry>
+                <material name="Ensenso/White"/>
+            </visual>
+        </link>
+
+        <!-- Lens right -->
+        <joint name="${name}_lens_right_joint" type="fixed">
+            <parent link="${name}_body"/>
+            <child link="${name}_lens_right"/>
+            <origin xyz="0.05 0.0 0.026" rpy="0.0 0.0 0.0"/>
+        </joint>
+        <link name="${name}_lens_right">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.001" radius="0.015"/>
+                </geometry>
+                <material name="Ensenso/White"/>
+            </visual>
+        </link>
+
+        <!-- Emitter -->
+        <joint name="${name}_emitter_joint" type="fixed">
+            <parent link="${name}_body"/>
+            <child link="${name}_emitter"/>
+            <origin xyz="0.0 0.0 0.026" rpy="0.0 0.0 0.0"/>
+        </joint>
+        <link name="${name}_emitter">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.001" radius="0.022"/>
+                </geometry>
+                <material name="Ensenso/White"/>
+            </visual>
+            <collision>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.001" radius="0.015"/>
+                </geometry>
+            </collision>
+        </link>
+
+    </xacro:macro>
+</robot>
