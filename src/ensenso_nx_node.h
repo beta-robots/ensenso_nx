@@ -20,13 +20,15 @@
 //enum run mode
 enum RunMode {SERVER=0,PUBLISHER};
 
-/** \brief Ensenso NX ROS wrapper
+/** \brief Ensenso NX ROS wrapper for point cloud capture
  * 
- * Ensenso NX ROS wrapper
+ * Ensenso NX ROS wrapper for point cloud capture
  * 
  * Two running modes:
- *    * Snapshot upon request
- *    * Continuous point cloud publisher (not yet implemented) 
+ *    * SERVER: Snapshot upon request
+ *    * PUBLISHER: Continuous point cloud publication
+ * 
+ * In both cases the point cloud is published thorugh the same topic
  * 
  **/
 class EnsensoNxNode
@@ -47,13 +49,13 @@ class EnsensoNxNode
         //A pcl point cloud, used to get data and publish it
         pcl::PointCloud<pcl::PointXYZ> cloud_; 
         
-        //node parameters
+        //node configuration parameters
+        RunMode run_mode_;//run mode: The node acts as a server, or a continuous pcl publisher        
         double rate_; //loop rate
         std::string frame_name_; //name of the frame of references with respect cloud are published
-        RunMode run_mode_;//run mode: The node acts as a server, or a continuous pcl publisher
                 
-        //device parameters
-        EnsensoNx::DeviceParams device_params_;
+        //device parameters TODO: think if it is necessary, ... it seems not!
+        //EnsensoNx::DeviceParams device_params_;
         
         //capture parameters
         EnsensoNx::CaptureParams capture_params_;        

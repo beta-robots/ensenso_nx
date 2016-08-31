@@ -130,7 +130,7 @@ void Device::configureCapture()
 {
     //sets capture configuration to the camera
     camera_[itmParameters][itmCapture][itmAutoExposure] = capture_params_.auto_exposure_;
-    camera_[itmParameters][itmCapture][itmExposure    ] = capture_params_.exposure_time_;
+    camera_[itmParameters][itmCapture][itmExposure    ] = capture_params_.exposure_time_;//TODO check if requires cast to double. 
     
     //print out
     std::cout << "EnsensoNx::Device: Capture params set to:" << std::endl; 

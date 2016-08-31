@@ -15,16 +15,33 @@ EnsensoNxNode::EnsensoNxNode()
     camera_ = new EnsensoNx::Device(); 
 
     //configure node according yaml params
-    //TODO
-    run_mode_ = SERVER; 
-    rate_ = 10; 
-    frame_name_ = "ensenso_camera"; 
+    nh_.getParam("run_mode", (RunMode)this->run_mode_);
+    nh_.getParam("rate", this->rate_);
+    nh_.getParam("frame_name", this->frame_name_);
+    nh_.getParam("autoexposure", this->capture_params_.autoexposure_);
+    nh_.getParam("exposure_time", this->capture_params_.exposure_time_);
+    if ( run_mode_ == PUBLISHER ) 
+    {
+        camera_->configureCapture(this->capture_params_);
+    }
     
-    //print
+//     run_mode_ = SERVER; 
+//     rate_ = 10; 
+//     frame_name_ = "ensenso_camera"; 
+    
+    //print configs 
     std::cout << "ROS EnsensoNxNode Setings: " << std::endl; 
     std::cout << "\trun mode: \t" << run_mode_ << std::endl;
-    std::cout << "\trate [hz]: \t" << rate_  << std::endl;
     std::cout << "\tframe name: \t" << frame_name_ << std::endl;
+    if ( run_mode_ == PUBLISHER )
+    {
+        std::cout << "\trate [hz]: \t" << rate_  << std::endl;
+        std::cout << "\tautoexposure [hz]: \t" << capture_params_.autoexposure_ << std::endl;
+        if ( !capture_params_.autoexposure_ )
+        {
+            std::cout << "\texposure [ms]: \t" << capture_params_.exposure_time_ << std::endl;
+        }
+    }
 
 }
 

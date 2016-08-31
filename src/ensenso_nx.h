@@ -33,12 +33,12 @@ struct DeviceParams
 struct CaptureParams
 {
     bool auto_exposure_;
-    double exposure_time_; //in microseconds
+    unsigned int exposure_time_; //in milliseconds TODO: check if uint is enough, or needs double
     
     void print() const
     {
         std::cout << "\tauto exposure [t/f]: \t" << auto_exposure_ << std::endl;
-        std::cout << "\texposure [us]: \t" << exposure_time_ << std::endl;
+        std::cout << "\texposure [ms]: \t" << exposure_time_ << std::endl;
     }
 };
 

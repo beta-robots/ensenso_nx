@@ -85,7 +85,7 @@ generate_messages(
 )
 
 #dynamic reconfigure cfg file
-# generate_dynamic_reconfigure_options(cfg/ensenso_nx_params.cfg)
+generate_dynamic_reconfigure_options(cfg/ensenso_nx_params.cfg)
 
 ## The catkin_package macro generates cmake config files for your package
 catkin_package(

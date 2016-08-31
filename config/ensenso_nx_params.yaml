@@ -1,0 +1,17 @@
+
+#*************** ensenso_nx node and capture parameters ************************
+
+#run mode: run mode: 0->SERVER, 1->PUBLISHER
+run_mode: 0
+
+#loop rate in hz (good values: 10 when SERVER, below 1 when PUBLISHER)
+rate: 10
+
+#frame name to which point cloud is referenced
+frame_name: "ensenso_nx_cloud"
+
+#capture autoexposure [t/f]
+autoexposure: False
+
+#capture exposure time [ms]
+exposure_time: 20
