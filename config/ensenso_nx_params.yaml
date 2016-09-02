@@ -8,10 +8,10 @@ run_mode: 0
 rate: 10
 
 #frame name to which point cloud is referenced
-frame_name: "ensenso_nx_cloud"
+frame_name: "single_ensenso_n35_body"
 
 #capture autoexposure [t/f]
-autoexposure: False
+auto_exposure: False
 
 #capture exposure time [ms]
-exposure_time: 20
+exposure_time: 25

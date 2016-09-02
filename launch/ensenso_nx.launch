@@ -6,7 +6,8 @@
 
     <!-- User Args  -->
     <arg name="rviz" default="true" doc="rviz visualization or not"/>
-    <arg name="model_tf" default="true" doc="3D model visualization and tf"/>    
+    <arg name="model_tf" default="true" doc="3D model visualization and tf"/> 
+    <arg name="config_file" default="$(find ensenso_nx)/config/ensenso_nx_params.yaml" doc="YAML file with configutaion parameters"/>
     
     <!--3D model as a robot robot description and tf-->
     <group if="$(arg model_tf)">
@@ -38,6 +39,7 @@
         type="ensenso_nx"
         name="ensenso_nx"
         output="screen">
+        <rosparam command="load" file="$(arg config_file)"/>
     </node>      
     
     <!--visualization-->

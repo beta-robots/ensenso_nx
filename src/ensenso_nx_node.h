@@ -15,7 +15,7 @@
 
 //custom ROS dependencies
 #include "ensenso_nx/PointCloudAsService.h" //custom "capture" service
-//#include <ensenso_nx/ensenso_nx_paramsConfig.h> //ROS dynamic configure
+#include <ensenso_nx/ensenso_nx_paramsConfig.h> //ROS dynamic configure
 
 //enum run mode
 enum RunMode {SERVER=0,PUBLISHER};
