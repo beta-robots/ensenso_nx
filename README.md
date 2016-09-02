@@ -30,7 +30,7 @@ $ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
 ```
 
 ### Download and Build This ROS package
-Download with:
+Download to your ROS workspace /src, with the command:
 ```shell
 $ git clone https://github.com/beta-robots/ensenso_nx.git
 ```
@@ -40,7 +40,7 @@ $ catkin_make --only-pkg-with-deps ensenso_nx
 ```
 
 ### Camera Operation
-Start the ueye driver:
+Start the ueye driver (in case it didn't started on system boot):
 ```shell
 $ sudo /etc/init.d/ueyeethdrc start
 ```
@@ -52,10 +52,17 @@ Run the node (by default a rviz window will appear)
 ```shell
 $ roslaunch ensenso_nx ensenso_nx.launch 
 ```
-From another terminal request a Point Cloud capture with a given exposure value: 
+If you are operating the node in run mode "SERVER", from another terminal please request a Point Cloud capture with a given exposure value: 
 ```shell
 $ rosservice call /ensenso_server "exposure: 30"
 ```
+
+### Troubleshooting
+To set manually set the IP for a given camera, or manage other configurations, go to: 
+```shell
+$ ueyecameramanager
+```
+
 
 
 

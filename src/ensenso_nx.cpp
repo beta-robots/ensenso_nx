@@ -112,14 +112,13 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     _p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
     
     //debug message
-    std::cout << "Cloud capture: " << std::endl <<
-                 "\treturn code: " << nx_return_code << std::endl <<
-                 "\tnum points: " << raw_points.size()/3 << std::endl <<
-                 "\twidth: " << ww << std::endl <<
-                 "\theight: " << hh << std::endl <<
-                 "\tkk: " << kk << std::endl; 
-    
-    
+//     std::cout << "Cloud capture: " << std::endl <<
+//                  "\treturn code: " << nx_return_code << std::endl <<
+//                  "\tnum points: " << raw_points.size()/3 << std::endl <<
+//                  "\twidth: " << ww << std::endl <<
+//                  "\theight: " << hh << std::endl <<
+//                  "\tvalid_points: " << kk << std::endl; 
+        
     //return success
     return 1; 
 }
@@ -130,11 +129,11 @@ void Device::configureCapture()
 {
     //sets capture configuration to the camera
     camera_[itmParameters][itmCapture][itmAutoExposure] = capture_params_.auto_exposure_;
-    camera_[itmParameters][itmCapture][itmExposure    ] = capture_params_.exposure_time_;
+    camera_[itmParameters][itmCapture][itmExposure    ] = (double)capture_params_.exposure_time_;//TODO check if requires cast to double. 
     
     //print out
-    std::cout << "EnsensoNx::Device: Capture params set to:" << std::endl; 
-    capture_params_.print();   
+    //std::cout << "EnsensoNx::Device: Capture params set to:" << std::endl; 
+    //capture_params_.print();   
 }
 
 }//close namespace
