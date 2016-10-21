@@ -2,7 +2,7 @@
 ### Overview
 This repository holds code of a [ROS](http://www.ros.org) package for point cloud acquisition with  [EnsensoNx](https://en.ids-imaging.com/ensenso-stereo-3d-camera.html) 3D cameras. It is basically a ROS wrapper of the low-level API provided by [IDS](https://en.ids-imaging.com), the manufacturer of the camera. 
 
-![Camera and cloud at rviz](https://github.com/beta-robots/ensenso_nx/blob/master/media/20160801_ensenso_ros_cropped.png)
+![Camera and cloud at rviz](media/20160801_ensenso_ros_cropped.png)
 
 ### Dependencies
 The package has been tested with the following dependencies:
