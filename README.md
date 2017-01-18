@@ -28,6 +28,11 @@ To install Ensenso SDK dependency:
 ```shell 
 $ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
 ```
+3. The installation above does not copy the file FindEnsenso.cmake to the CMake Modules folder, so we have to do that manually:
+```shell 
+$ to do with a single command ....
+```
+
 
 ### Download and Build This ROS package
 Download to your ROS workspace /src, with the command:
@@ -58,13 +63,21 @@ $ rosservice call /ensenso_server "exposure: 30"
 ```
 
 ### Troubleshooting
-To set manually set the IP for a given camera, or manage other configurations, go to: 
+To manually set the IP for a given camera, or manage other configurations, go to: 
 ```shell
 $ ueyecameramanager
 ```
 
+In some cases the command to start the eth daemon returns **ueyeethd is not running**. In such case you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the the interface and port, for instance:
+```shell
+;ueye configuration file
 
+[Parameters]
+Interfaces = eth0
 
+[eth0]
+Port_Base = 50000
+```
 
 
 
