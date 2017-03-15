@@ -8,6 +8,11 @@
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
 
+//OpenCV
+#include "opencv2/opencv.hpp"
+#include "opencv2/core.hpp"
+// #include "opencv2/imgproc.hpp"
+
 //std
 #include <iostream>
 #include <cmath>
@@ -52,6 +57,8 @@ class Device
         
         NxLibItem nx_lib_root_; // Reference to the API tree root 
         NxLibItem camera_; //Reference to the nxlib camera device
+        
+        std::vector<float> raw_points_; //raw xyz points from camera
 
     public: 
         /** \brief Constructor
@@ -82,6 +89,15 @@ class Device
          * \return 1 if ok, -1 if not. TODO
         **/
         int capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud);
+        
+        /** \brief Get a point cloud and a depth image from the device 
+         * Get a point cloud and a depth image from the device 
+         * \param _p_cloud: a point cloud where the capture data will be placed
+         * \param _d_image: a depth image where the data is placed
+         * \return 1 if ok, -1 if not. TODO
+        **/
+        int capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_image);
+        
         
     protected:
         /** \brief Hardware set configuration

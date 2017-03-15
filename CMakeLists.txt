@@ -45,6 +45,8 @@ find_package(
         sensor_msgs 
         pcl_ros
         pcl_conversions
+        image_transport 
+        cv_bridge
 )
 
 # Find point cloud Library
@@ -52,6 +54,11 @@ FIND_PACKAGE(PCL 1.3 REQUIRED COMPONENTS)
 INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
 ADD_DEFINITIONS(${PCL_DEFINITIONS})
+
+#OPenCV
+find_package(OpenCV REQUIRED)
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 
 # Add module path where FindEnsenso.cmake is, and then Set Ensenso library and include paths
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{ENSENSO_INSTALL}/cmake/")
@@ -97,15 +104,19 @@ catkin_package(
         sensor_msgs
         pcl_ros
         pcl_conversions
+        image_transport 
+        cv_bridge        
 )
 
 #Build library (TODO: Should call a CMakeLists.txt at src/lib/)
 ADD_LIBRARY(${PROJECT_NAME}_LIB SHARED ${SRCS_LIB})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB 
+                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBS})
 
 #Build executable
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRCS_NODE} ${SRCS_LIB})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
+                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBS})
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp ${PROJECT_NAME}_gencfg)
 
 #Build examples

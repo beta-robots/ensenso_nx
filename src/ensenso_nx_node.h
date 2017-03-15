@@ -12,6 +12,9 @@
 #include <pcl_ros/point_cloud.h> //PCL-ROS interoperability
 #include <pcl_conversions/pcl_conversions.h> //conversions from/to PCL/ROS
 #include <std_msgs/Empty.h> //snapshot request
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
 
 //custom ROS dependencies
 #include "ensenso_nx/PointCloudAsService.h" //custom "capture" service
@@ -46,8 +49,15 @@ class EnsensoNxNode
         //Publisher. Point Clouds are published through this topic
         ros::Publisher cloud_publisher_; 
         
-        //A pcl point cloud, used to get data and publish it
+        //image transport and publisher
+        image_transport::ImageTransport image_tp_;
+        image_transport::Publisher image_publisher_;      
+        
+        //published point cloudz
         pcl::PointCloud<pcl::PointXYZ> cloud_; 
+
+        //published image
+        cv_bridge::CvImage image_;        
         
         //node configuration parameters
         RunMode run_mode_;//run mode: The node acts as a server, or a continuous pcl publisher        
