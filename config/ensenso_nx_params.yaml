@@ -2,10 +2,10 @@
 #*************** ensenso_nx node and capture parameters ************************
 
 #run mode: run mode: 0->SERVER, 1->PUBLISHER
-run_mode: 0
+run_mode: 1
 
 #loop rate in hz (good values: 10 when SERVER, below 1 when PUBLISHER)
-rate: 10
+rate: 1
 
 #frame name to which point cloud is referenced
 frame_name: "single_ensenso_n35_body"

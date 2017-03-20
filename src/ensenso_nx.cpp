@@ -70,7 +70,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 {
     int ww, hh;
     float px; 
-    std::vector<float> raw_points;
+    //std::vector<float> raw_points;
     int nx_return_code; 
     
     // Capture images
@@ -86,7 +86,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     camera_[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
     
     //Get 3D image raw data 
-    camera_[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points, 0);
+    camera_[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points_, 0);
      
     //Move raw data to point cloud
     _p_cloud.width = (unsigned int)ww;
@@ -97,12 +97,12 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     {
         for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
         {
-            px = raw_points[(ii*_p_cloud.width + jj)*3]; 
+            px = raw_points_[(ii*_p_cloud.width + jj)*3]; 
             if ( !std::isnan(px) )
             {
                 _p_cloud.points.at(kk).x = px/1000.;
-                _p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
-                _p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
+                _p_cloud.points.at(kk).y = raw_points_[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
+                _p_cloud.points.at(kk).z = raw_points_[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
                 kk++; 
             }
         }
@@ -114,13 +114,69 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     //debug message
 //     std::cout << "Cloud capture: " << std::endl <<
 //                  "\treturn code: " << nx_return_code << std::endl <<
-//                  "\tnum points: " << raw_points.size()/3 << std::endl <<
+//                  "\tnum points: " << raw_points_.size()/3 << std::endl <<
 //                  "\twidth: " << ww << std::endl <<
 //                  "\theight: " << hh << std::endl <<
 //                  "\tvalid_points: " << kk << std::endl; 
         
     //return success
     return 1; 
+}
+
+int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_image)
+{
+    //local vars
+    int ww, hh;
+    
+    //get point cloud. raw_points_ class member is also set
+    int ret_value = this->capture(_p_cloud); 
+    
+    //from point cloud, initialize a depth image
+    camera_[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0); // Get image dimensions
+    _d_image.create(hh, ww, CV_16UC1);
+    //_d_image.create(_p_cloud.height, _p_cloud.width, CV_8UC1);
+    
+    //debug message
+//     std::cout << "_p_cloud.height: " << _p_cloud.height << std::endl
+//               << "_p_cloud.width: " << _p_cloud.width << std::endl
+//               << "_d_image.rows: " << _d_image.rows << std::endl
+//               << "_d_image.cols: " << _d_image.cols << std::endl;
+    
+    //fill image
+    float depth_f, px;
+    unsigned short depth_us; 
+    //unsigned short depth_uc;
+    for (unsigned int ii=0; ii<_d_image.rows; ii++)
+    {
+        for (unsigned int jj=0; jj<_d_image.cols; jj++)
+        {
+            //check if value is valid 
+            //depth_f = _p_cloud.points.at(ii*_p_cloud.width+jj).z;
+            px = raw_points_.at((ii*_d_image.cols+jj)*3); 
+            if ( !std::isnan(px) )
+            {
+                //get depth data
+                depth_f = raw_points_.at((ii*_d_image.cols+jj)*3+2)/1000.; 
+                
+                //convert depth to unsigned short between 1m and 2m
+                if (depth_f > 2.) depth_f = 2.;
+                if (depth_f < 1.) depth_f = 1.; 
+                depth_us = (unsigned short)((depth_f-1.)*(65536.-1.));
+                //depth_uc = (unsigned char)((depth_f-1.)*(255.));
+                
+                //set value to image
+                _d_image.at<unsigned short>(ii,jj) = depth_us;
+                //_d_image.at<unsigned char>(ii,jj) = depth_uc;
+            }
+            else //in case of nan, put a 0 in the image
+            {
+                _d_image.at<unsigned short>(ii,jj) = (65536-1);
+            }
+        }
+    }
+
+    //return value from above capture call
+    return ret_value; 
 }
 
 //PROTECTED METHODS

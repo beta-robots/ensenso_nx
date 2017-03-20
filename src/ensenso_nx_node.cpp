@@ -1,12 +1,16 @@
 #include "ensenso_nx_node.h"
 
 EnsensoNxNode::EnsensoNxNode():
-    nh_(ros::this_node::getName())
+    nh_(ros::this_node::getName()), 
+    image_tp_(nh_)
 {    
     int param_int; 
     
     //init the point cloud publisher
     cloud_publisher_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZ> >("ensenso_cloud", 1);
+    
+    //init the image publisher
+    image_publisher_ = image_tp_.advertise("ensenso_depth_image", 1);
     
     //init server
     cloud_server_ = nh_.advertiseService("ensenso_server", &EnsensoNxNode::pointCloudServiceCallback, this);
@@ -25,10 +29,6 @@ EnsensoNxNode::EnsensoNxNode():
     {
         camera_->configureCapture(this->capture_params_);
     }
-    
-//     run_mode_ = SERVER; 
-//     rate_ = 10; 
-//     frame_name_ = "single_ensenso_n35_body"; 
     
     //print configs 
     std::cout << "ROS EnsensoNxNode Settings: " << std::endl; 
@@ -65,12 +65,23 @@ double EnsensoNxNode::rate() const
 void EnsensoNxNode::publish()
 {
     //Get a single capture from camera and publish the point cloud
-    if ( camera_->capture(cloud_) == 1 )
+    if ( camera_->capture(cloud_, image_.image) == 1 )
     {
+        //get time
         ros::Time ts = ros::Time::now();
+        
+        //publish the cloud
         cloud_.header.stamp = (pcl::uint64_t)(ts.toSec()*1e6); //TODO: should be set by the EnsensoNx::Device class
         cloud_.header.frame_id = frame_name_; 
         cloud_publisher_.publish(cloud_);
+        
+        //publish the depth image
+        image_.header.seq ++;
+        image_.header.stamp = ts;
+        image_.header.frame_id = frame_name_; 
+        image_.encoding = sensor_msgs::image_encodings::MONO16;
+//         image_.encoding = sensor_msgs::image_encodings::MONO8;
+        image_publisher_.publish(image_.toImageMsg());        
     }
     else
     {
