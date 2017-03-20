@@ -5,7 +5,7 @@
 run_mode: 1
 
 #loop rate in hz (good values: 10 when SERVER, below 1 when PUBLISHER)
-rate: 2
+rate: 1
 
 #frame name to which point cloud is referenced
 frame_name: "single_ensenso_n35_body"

@@ -79,8 +79,8 @@ void EnsensoNxNode::publish()
         image_.header.seq ++;
         image_.header.stamp = ts;
         image_.header.frame_id = frame_name_; 
-        //image_.encoding = sensor_msgs::image_encodings::MONO16;
-        image_.encoding = sensor_msgs::image_encodings::MONO8;
+        image_.encoding = sensor_msgs::image_encodings::MONO16;
+//         image_.encoding = sensor_msgs::image_encodings::MONO8;
         image_publisher_.publish(image_.toImageMsg());        
     }
     else

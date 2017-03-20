@@ -114,7 +114,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     //debug message
 //     std::cout << "Cloud capture: " << std::endl <<
 //                  "\treturn code: " << nx_return_code << std::endl <<
-//                  "\tnum points: " << raw_points.size()/3 << std::endl <<
+//                  "\tnum points: " << raw_points_.size()/3 << std::endl <<
 //                  "\twidth: " << ww << std::endl <<
 //                  "\theight: " << hh << std::endl <<
 //                  "\tvalid_points: " << kk << std::endl; 
@@ -125,42 +125,52 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 
 int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_image)
 {
+    //local vars
+    int ww, hh;
+    
     //get point cloud. raw_points_ class member is also set
     int ret_value = this->capture(_p_cloud); 
     
     //from point cloud, initialize a depth image
-    //_d_image.create(_p_cloud.height, _p_cloud.width, CV_16UC1);
-    _d_image.create(_p_cloud.height, _p_cloud.width, CV_8UC1);
+    camera_[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0); // Get image dimensions
+    _d_image.create(hh, ww, CV_16UC1);
+    //_d_image.create(_p_cloud.height, _p_cloud.width, CV_8UC1);
+    
+    //debug message
+//     std::cout << "_p_cloud.height: " << _p_cloud.height << std::endl
+//               << "_p_cloud.width: " << _p_cloud.width << std::endl
+//               << "_d_image.rows: " << _d_image.rows << std::endl
+//               << "_d_image.cols: " << _d_image.cols << std::endl;
     
     //fill image
-    double depth_d, px;
-    //unsigned short depth_us; 
-    unsigned short depth_uc;
+    float depth_f, px;
+    unsigned short depth_us; 
+    //unsigned short depth_uc;
     for (unsigned int ii=0; ii<_d_image.rows; ii++)
     {
         for (unsigned int jj=0; jj<_d_image.cols; jj++)
         {
             //check if value is valid 
-            //depth_d = _p_cloud.points.at(ii*_p_cloud.width+jj).z;
+            //depth_f = _p_cloud.points.at(ii*_p_cloud.width+jj).z;
             px = raw_points_.at((ii*_d_image.cols+jj)*3); 
             if ( !std::isnan(px) )
             {
                 //get depth data
-                depth_d = raw_points_.at((ii*_d_image.cols+jj)*3+2); 
+                depth_f = raw_points_.at((ii*_d_image.cols+jj)*3+2)/1000.; 
                 
                 //convert depth to unsigned short between 1m and 2m
-                if (depth_d > 2.) depth_d = 2.;
-                if (depth_d < 1.) depth_d = 1.; 
-                //depth_us = (unsigned short)((depth_d-1.)*(65536.-1.));
-                depth_uc = (unsigned char)((depth_d-1.)*(255.));
+                if (depth_f > 2.) depth_f = 2.;
+                if (depth_f < 1.) depth_f = 1.; 
+                depth_us = (unsigned short)((depth_f-1.)*(65536.-1.));
+                //depth_uc = (unsigned char)((depth_f-1.)*(255.));
                 
                 //set value to image
-                //_d_image.at<unsigned short>(ii,jj) = depth_us;
-                _d_image.at<unsigned char>(ii,jj) = depth_uc;
+                _d_image.at<unsigned short>(ii,jj) = depth_us;
+                //_d_image.at<unsigned char>(ii,jj) = depth_uc;
             }
             else //in case of nan, put a 0 in the image
             {
-                _d_image.at<unsigned char>(ii,jj) = 0;
+                _d_image.at<unsigned short>(ii,jj) = (65536-1);
             }
         }
     }
