@@ -3,7 +3,7 @@
   <name>ensenso_nx</name>
     <version>0.0.0</version>
     <description>
-       Point cloud acquisition from Ensenso Nx cameras.
+       Point cloud and depth image acquisition from Ensenso Nx cameras. Camera acquisition can be configured as as a publisher or as a service. 
     </description>
 
     <!-- One maintainer tag required, multiple allowed, one person per tag --> 
@@ -13,7 +13,7 @@
     <license>BSD</license>
 
     <!-- Url tags are optional, but mutiple are allowed, one per tag -->
-    <url type="website">https://github.com/beta-robots/ensenso_3100</url>
+    <url type="website">https://github.com/beta-robots/ensenso_nx</url>
 
     <!-- Author tags are optional, mutiple are allowed, one per tag -->
     <author email="andreu@beta-robots.com">Andreu Corominas-Murtra</author>
