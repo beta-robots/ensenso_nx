@@ -168,7 +168,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_imag
                 _d_image.at<unsigned short>(ii,jj) = depth_us;
                 //_d_image.at<unsigned char>(ii,jj) = depth_uc;
             }
-            else //in case of nan, put a 0 in the image
+            else //in case of nan, put max depth in the image (max intensity level)
             {
                 _d_image.at<unsigned short>(ii,jj) = (65536-1);
             }
