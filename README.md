@@ -64,18 +64,12 @@ $ rosservice call /ensenso_server "exposure: 30"
 ```
 
 ### Troubleshooting
-To manually set the IP for a given camera, or manage other configurations, go to: 
+Check that the IP of the computer and that of the camera are in the same network. To manually set the IP of the camera, or manage other configurations, go to: 
 ```shell
 $ ueyecameramanager
 ```
 
-Sometimes you have to stop the ueye daemon an then start it again 
-```shell
-$ sudo /etc/init.d/ueyeethdrc stop
-$ sudo /etc/init.d/ueyeethdrc start
-```
-
-In some cases the command to start the eth daemon returns **ueyeethd is not running**. In such case you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port, for instance:
+In some cases you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port. For instance, if you are using eth0 interface, the file should look like:
 ```shell
 ;ueye configuration file
 
@@ -84,6 +78,12 @@ Interfaces = eth0
 
 [eth0]
 Port_Base = 50000
+```
+
+Sometimes you have to stop the ueye daemon an then start it again 
+```shell
+$ sudo /etc/init.d/ueyeethdrc stop
+$ sudo /etc/init.d/ueyeethdrc start
 ```
 
 
