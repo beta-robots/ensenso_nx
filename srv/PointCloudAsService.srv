@@ -1,10 +1,13 @@
 #Request/Reply for Point Cloud Service
 
-#Request by indicating the expopsure in milliseconds. 
-#0 indicates autoexposure
+# Request:
+#   exposure in milliseconds (0 indicates autoexposure) 
+#   dense_cloud = true if the cloud has to be dense (ordered)
 uint32 exposure
+bool dense_cloud
 
 ---
 
-#Reply with the size of the captured point cloud
-uint32 size
+# Reply with the size of the captured point cloud
+uint32 cloud_width
+uint32 cloud_height
