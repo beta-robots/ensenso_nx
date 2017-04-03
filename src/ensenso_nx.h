@@ -19,7 +19,11 @@
 
 namespace EnsensoNx
 {
+    
+const double MAX_DEPTH = 2.;
+const double MIN_DEPTH = 1.; 
 
+//device configuration struct
 struct DeviceParams
 {
 //     std::string ip_address_;    
@@ -34,16 +38,18 @@ struct DeviceParams
     }
 };
 
-//device configuration struct
+//capture configuration struct
 struct CaptureParams
 {
     bool auto_exposure_;
     unsigned int exposure_time_; //in milliseconds TODO: check if uint is enough, or needs double
+    bool dense_cloud_; //Device::capture() returns a dense (ordered) point cloud if set to true 
     
     void print() const
     {
         std::cout << "\tauto exposure [t/f]: \t" << auto_exposure_ << std::endl;
         std::cout << "\texposure [ms]: \t" << exposure_time_ << std::endl;
+        std::cout << "\tdense cloud [t/f]: \t" << dense_cloud_ << std::endl;
     }
 };
 
@@ -81,7 +87,7 @@ class Device
          * Set exposure in microseconds
          * \param _exposure: exposure in milliseconds, a value of 0 indicates autoexposure
         **/
-        void configureExposure(unsigned int _exposure);
+//         void configureExposure(unsigned int _exposure);
         
         /** \brief Get a point cloud from the device
          * Get a point cloud from the device
@@ -97,7 +103,6 @@ class Device
          * \return 1 if ok, -1 if not. TODO
         **/
         int capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_image);
-        
         
     protected:
         /** \brief Hardware set configuration

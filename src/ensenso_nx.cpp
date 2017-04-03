@@ -45,26 +45,27 @@ void Device::configureCapture(const CaptureParams & _params)
     //update class member
     capture_params_.auto_exposure_ = _params.auto_exposure_;
     capture_params_.exposure_time_ = _params.exposure_time_;
+    capture_params_.dense_cloud_ = _params.dense_cloud_;
     
     //call protected member to set the configuration to the camera
     this->configureCapture(); 
 }
 
-void Device::configureExposure(unsigned int _exposure)
-{
-    if (_exposure == 0) //autoexposure case
-    {
-        capture_params_.auto_exposure_ = true; 
-    }
-    else //manual exposure case
-    {
-        capture_params_.auto_exposure_ = false;
-        capture_params_.exposure_time_ = _exposure; 
-    }
-    
-    //call protected member to set the configuration to the camera
-    this->configureCapture(); 
-}
+// void Device::configureExposure(unsigned int _exposure)
+// {
+//     if (_exposure == 0) //autoexposure case
+//     {
+//         capture_params_.auto_exposure_ = true; 
+//     }
+//     else //manual exposure case
+//     {
+//         capture_params_.auto_exposure_ = false;
+//         capture_params_.exposure_time_ = _exposure; 
+//     }
+//     
+//     //call protected member to set the configuration to the camera
+//     this->configureCapture(); 
+// }
 
 int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 {
@@ -105,10 +106,26 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
                 _p_cloud.points.at(kk).z = raw_points_[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
                 kk++; 
             }
+            else //in case of nan, check dense_cloud_ 
+            {
+                if (capture_params_.dense_cloud_)
+                {
+                    _p_cloud.points.at(kk).x = px/1000.;
+                    _p_cloud.points.at(kk).y = raw_points_[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
+                    _p_cloud.points.at(kk).z = MAX_DEPTH;                    
+                    kk++; 
+                }
+                else
+                {
+                    //nothing to do , the point is lost
+                }
+                
+            }
+            
         }
     }
     
-    //resize with number valid points
+    //resize with number valid points. If _dense_cloud, just set the flag ordered to true
     _p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
     
     //debug message
@@ -159,9 +176,9 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_imag
                 depth_f = raw_points_.at((ii*_d_image.cols+jj)*3+2)/1000.; 
                 
                 //convert depth to unsigned short between 1m and 2m
-                if (depth_f > 2.) depth_f = 2.;
-                if (depth_f < 1.) depth_f = 1.; 
-                depth_us = (unsigned short)((depth_f-1.)*(65536.-1.));
+                if (depth_f > MAX_DEPTH) depth_f = MAX_DEPTH;
+                if (depth_f < MIN_DEPTH) depth_f = MIN_DEPTH; 
+                depth_us = (unsigned short)((depth_f-MIN_DEPTH)*(65535.));
                 //depth_uc = (unsigned char)((depth_f-1.)*(255.));
                 
                 //set value to image
@@ -170,7 +187,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud, cv::Mat & _d_imag
             }
             else //in case of nan, put max depth in the image (max intensity level)
             {
-                _d_image.at<unsigned short>(ii,jj) = (65536-1);
+                _d_image.at<unsigned short>(ii,jj) = 65535;
             }
         }
     }

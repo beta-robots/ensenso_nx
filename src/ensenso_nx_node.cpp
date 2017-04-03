@@ -25,6 +25,7 @@ EnsensoNxNode::EnsensoNxNode():
     nh_.getParam("frame_name", this->frame_name_);
     nh_.getParam("auto_exposure", this->capture_params_.auto_exposure_);
     nh_.getParam("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
+    nh_.getParam("dense_cloud", param_int); this->capture_params_.dense_cloud_ = (bool)param_int;
     if ( run_mode_ == PUBLISHER ) 
     {
         camera_->configureCapture(this->capture_params_);
@@ -34,7 +35,7 @@ EnsensoNxNode::EnsensoNxNode():
     std::cout << "ROS EnsensoNxNode Settings: " << std::endl; 
     std::cout << "\trun mode: \t" << run_mode_ << std::endl;
     std::cout << "\tframe name: \t" << frame_name_ << std::endl;
-    if ( run_mode_ == PUBLISHER )
+    if ( run_mode_ == PUBLISHER ) //in SERVER, rate is not applicable, and other capture params are set at the request message
     {
         std::cout << "\trate [hz]: \t" << rate_  << std::endl;
         std::cout << "\tauto_exposure [hz]: \t" << capture_params_.auto_exposure_ << std::endl;
@@ -42,8 +43,8 @@ EnsensoNxNode::EnsensoNxNode():
         {
             std::cout << "\texposure [ms]: \t" << capture_params_.exposure_time_ << std::endl;
         }
+        std::cout << "\tdense_cloud: [t/f] \t" << capture_params_.dense_cloud_ << std::endl;
     }
-
 }
 
 EnsensoNxNode::~EnsensoNxNode()
@@ -93,14 +94,25 @@ void EnsensoNxNode::publish()
 bool EnsensoNxNode::pointCloudServiceCallback(ensenso_nx::PointCloudAsService::Request  & _request, 
                                               ensenso_nx::PointCloudAsService::Response & _reply)
 {
-    //set the exposure 
-    camera_->configureExposure((unsigned int)_request.exposure);
+    //configure capture according request
+    if (_request.exposure == 0)
+    {
+        capture_params_.auto_exposure_ = true; 
+    }
+    else
+    {
+        capture_params_.auto_exposure_ = false;
+        capture_params_.exposure_time_ = _request.exposure; 
+    }
+    capture_params_.dense_cloud_ = _request.dense_cloud;
+    camera_->configureCapture(capture_params_);
     
     //call capture and publish point cloud
     this->publish();
     
     //set the reply
-    _reply.size = cloud_.size(); 
+    _reply.cloud_width = cloud_.width;
+    _reply.cloud_height = cloud_.height; 
     
     //return
     return true; 
