@@ -58,9 +58,9 @@ Run the node (by default a rviz window will appear)
 ```shell
 $ roslaunch ensenso_nx ensenso_nx.launch 
 ```
-If you are operating the node in run mode "SERVER", from another terminal please request a Point Cloud capture with a given exposure value: 
+If you are operating the node in run mode "SERVER", from another terminal please request a Point Cloud capture with a given exposure value and dense point cloud flag: 
 ```shell
-$ rosservice call /ensenso_nx/ensenso_server "exposure: 30" 
+$ rosservice call /ensenso_nx/ensenso_server "exposure: 30 dense_cloud: true"
 ```
 
 ### Troubleshooting
