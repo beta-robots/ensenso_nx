@@ -97,5 +97,20 @@
             </collision>
         </link>
 
+        <!-- Virtual cloud -->
+        <joint name="${name}_virtual_cloud_joint" type="fixed">
+            <parent link="${name}_body"/>
+            <child link="${name}_virtual_cloud"/>
+            <origin xyz="0.0 0.0 1.5" rpy="3.141592 0.0 0.0"/>
+        </joint>
+        <link name="${name}_virtual_cloud">
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0"/>
+                <geometry>
+                    <cylinder length="0.001" radius="0.022"/>
+                </geometry>                
+            </visual>
+        </link>
+        
     </xacro:macro>
 </robot>
