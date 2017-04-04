@@ -106,13 +106,13 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
                 _p_cloud.points.at(kk).z = raw_points_[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
                 kk++; 
             }
-            else //in case of nan, check dense_cloud_ 
+            else //in case of nan, check dense_cloud_ to fill in the cloud or not 
             {
                 if (capture_params_.dense_cloud_)
                 {
-                    _p_cloud.points.at(kk).x = px/1000.;
-                    _p_cloud.points.at(kk).y = raw_points_[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
-                    _p_cloud.points.at(kk).z = MAX_DEPTH;                    
+                    _p_cloud.points.at(kk).x = std::nan("");
+                    _p_cloud.points.at(kk).y = std::nan("");
+                    _p_cloud.points.at(kk).z = std::nan("");                 
                     kk++; 
                 }
                 else
