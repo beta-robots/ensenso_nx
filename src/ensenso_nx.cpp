@@ -113,7 +113,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
                     _p_cloud.points.at(kk).x = std::nan("");
                     _p_cloud.points.at(kk).y = std::nan("");
                     _p_cloud.points.at(kk).z = std::nan("");                 
-                    kk++; 
+                    kk++;
                 }
                 else
                 {
@@ -127,6 +127,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
     
     //resize with number valid points. If _dense_cloud, just set the flag ordered to true
     _p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
+    _p_cloud.is_dense = capture_params_.dense_cloud_;
     
     //debug message
 //     std::cout << "Cloud capture: " << std::endl <<
