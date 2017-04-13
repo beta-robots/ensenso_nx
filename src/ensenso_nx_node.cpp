@@ -91,8 +91,8 @@ void EnsensoNxNode::publish()
         
 }
         
-bool EnsensoNxNode::pointCloudServiceCallback(ensenso_nx::PointCloudAsService::Request  & _request, 
-                                              ensenso_nx::PointCloudAsService::Response & _reply)
+bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Request  & _request, 
+                                              sensor_msgs::SnapshotCloud::Response & _reply)
 {
     //configure capture according request
     if (_request.exposure == 0)
@@ -107,13 +107,20 @@ bool EnsensoNxNode::pointCloudServiceCallback(ensenso_nx::PointCloudAsService::R
     capture_params_.dense_cloud_ = _request.dense_cloud;
     camera_->configureCapture(capture_params_);
     
-    //call capture and publish point cloud
-    this->publish();
-    
-    //set the reply
-    _reply.cloud_width = cloud_.width;
-    _reply.cloud_height = cloud_.height; 
-    
+    //Get a single capture from camera and set the reply
+    if ( camera_->capture(cloud_) == 1 )
+    {
+        //get time
+        ros::Time ts = ros::Time::now();        
+        cloud_.header.stamp = (pcl::uint64_t)(ts.toSec()*1e6); //TODO: should be set by the EnsensoNx::Device class
+        cloud_.header.frame_id = frame_name_;        
+        pcl::toROSMsg(cloud_, _reply.cloud); //see pcl-ros conversions at http://wiki.ros.org/action/fullsearch/pcl/Overview
+    }
+    else
+    {
+        std::cout << "EnsensoNxNode::pointCloudServiceCallback(): Error while capturing point cloud" << std::endl;
+    }
+
     //return
     return true; 
 }

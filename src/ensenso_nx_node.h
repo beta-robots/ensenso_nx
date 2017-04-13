@@ -15,6 +15,7 @@
 #include <image_transport/image_transport.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <sensor_msgs/SnapshotCloud.h> //forked at https://github.com/beta-robots/common_msgs
 
 //custom ROS dependencies
 #include "ensenso_nx/PointCloudAsService.h" //custom "capture" service
@@ -88,8 +89,8 @@ class EnsensoNxNode
                         
     protected: 
         //Service callback implementing the point cloud capture
-        bool pointCloudServiceCallback(ensenso_nx::PointCloudAsService::Request  & _request, 
-                                      ensenso_nx::PointCloudAsService::Response & _reply);
-                
+        bool pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Request  & _request, 
+                                       sensor_msgs::SnapshotCloud::Response & _reply);
+                        
 };
 #endif
