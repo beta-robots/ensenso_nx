@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 
 # Cmake policy
 if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0005 NEW) 
+  cmake_policy(SET CMP0005 NEW)
   cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
@@ -12,7 +12,7 @@ message(STATUS "Executig CMakeLists of project  ${PROJECT_NAME}.")
 
 # DEBUG/RELEASE
 IF (NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE "RELEASE") 
+  SET(CMAKE_BUILD_TYPE "RELEASE")
 ENDIF (NOT CMAKE_BUILD_TYPE)
 message(STATUS "Configured to compile in ${CMAKE_BUILD_TYPE} mode.")
 
@@ -36,17 +36,15 @@ endif()
 
 ## Find catkin macros and libraries
 find_package(
-    catkin REQUIRED 
-    COMPONENTS 
-        roscpp 
-        rospy 
-        dynamic_reconfigure 
+    catkin REQUIRED
+    COMPONENTS
+        roscpp
+        rospy
+        dynamic_reconfigure
         std_msgs
-        sensor_msgs 
+        sensor_msgs
         pcl_ros
         pcl_conversions
-        image_transport 
-        cv_bridge
 )
 
 # Find point cloud Library
@@ -54,10 +52,6 @@ FIND_PACKAGE(PCL 1.3 REQUIRED COMPONENTS)
 INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
 LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
 ADD_DEFINITIONS(${PCL_DEFINITIONS})
-
-#OPenCV
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
 
 
 # Add module path where FindEnsenso.cmake is, and then Set Ensenso library and include paths
@@ -70,7 +64,7 @@ message(STATUS "Ensenso Libraries found at ${ENSENSO_LIBRARIES}.")
 # add other necessary include directories
 include_directories(src/ ${catkin_INCLUDE_DIRS})
 
-# Set source files 
+# Set source files
 SET(SRCS_LIB
     src/ensenso_nx.cpp
 )
@@ -79,46 +73,32 @@ SET(SRCS_NODE
     src/ensenso_nx_node.cpp
     src/ensenso_nx_node_main.cpp
 )
-        
-add_service_files(
-  FILES
-  PointCloudAsService.srv
-)
-
-## Generate added messages and services
-generate_messages(
-      DEPENDENCIES 
-      std_msgs 
-)
 
 #dynamic reconfigure cfg file
 generate_dynamic_reconfigure_options(cfg/ensenso_nx_params.cfg)
 
 ## The catkin_package macro generates cmake config files for your package
 catkin_package(
-    CATKIN_DEPENDS 
-        roscpp 
-        rospy 
-        dynamic_reconfigure 
+    CATKIN_DEPENDS
+        roscpp
+        rospy
+        dynamic_reconfigure
         std_msgs
         sensor_msgs
         pcl_ros
         pcl_conversions
-        image_transport 
-        cv_bridge        
 )
 
 #Build library (TODO: Should call a CMakeLists.txt at src/lib/)
 ADD_LIBRARY(${PROJECT_NAME}_LIB SHARED ${SRCS_LIB})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB 
-                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB
+                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
 
 #Build executable
 ADD_EXECUTABLE(${PROJECT_NAME} ${SRCS_NODE} ${SRCS_LIB})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME} 
-                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES} ${OpenCV_LIBS})
+TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
 add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_gencpp ${PROJECT_NAME}_gencfg)
 
 #Build examples
 ADD_SUBDIRECTORY(src/examples)
-
