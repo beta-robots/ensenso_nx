@@ -18,41 +18,40 @@ To install the ueye driver and tools:
 1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.81.1_Linux_64.tgz)
 2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
 ```shell
-$ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
+$ sudo sh ./ueyesdk-setup-4.81.01-eth-amd64.gz.run
 ```
 
 To install Ensenso SDK dependency:
 
-1a. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
+1. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
 
-1b. Install it with
+2. Install it with
 ```shell
 $ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
 ```
 
-2a. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
+3. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
 
-2b. Install it with
+4. Install it with
 ```shell
 sudo dpkg -i /home/andreu/Desktop/codemeter_6.40.2402.501_amd64.deb
 ```
 
-3a. At the end of your ~/.bashrc file, add the following line: 
+
+### Download and Build This ROS package
+1. At the end of your ~/.bashrc file, add the following line: 
 ```shell
 export ENSENSO_INSTALL=/opt/ensenso
 ```
 
-3b. Do not hesitate to source again your .bashrc, or open a new terminal. 
+2. Do not forget to source again your .bashrc, or open a new terminal. 
 
-
-
-
-### Download and Build This ROS package
-Download to your ROS workspace /src, with the command:
+3. Download to your ROS workspace /src, with the command:
 ```shell
 $ git clone https://github.com/beta-robots/ensenso_nx.git
 ```
-and from your ROS workspace, build it with:
+
+4. and from your ROS workspace, build it with:
 ```shell
 $ catkin_make --only-pkg-with-deps ensenso_nx
 ```
