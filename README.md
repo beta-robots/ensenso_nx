@@ -37,7 +37,7 @@ $ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
 sudo dpkg -i /home/andreu/Desktop/codemeter_6.40.2402.501_amd64.deb
 ```
 
-7. Clone to your ROS workspace the forked version of common_msgs
+7. Clone to your ROS workspace /src the forked version of common_msgs
 ```shell
 $ git clone https://github.com/beta-robots/common_msgs.git
 ```
