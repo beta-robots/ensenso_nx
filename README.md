@@ -71,17 +71,17 @@ $ rosservice call /ensenso_nx/ensenso_server "dense_cloud: false exposure: 0"
 ```
 
 ### Troubleshooting
-The IDS application nxView shows 3D realtime data, and allows to manage all parameters involved in the stereo computation.
+- The IDS application nxView shows 3D realtime data, and allows to manage all parameters involved in the stereo computation.
 ```shell
 $ nxView
 ```
 
-Check that the IP of the computer and that of the camera are in the same network. To manually set the IP of the camera, or manage other configurations, go to:
+- Check that the IP of the computer and that of the camera are in the same network. To manually set the IP of the camera, or manage other configurations, go to:
 ```shell
 $ ueyecameramanager
 ```
 
-In some cases you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port. For instance, if you are using eth0 interface, the file should look like:
+- In some cases you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port. For instance, if you are using eth0 interface, the file should look like:
 ```shell
 ;ueye configuration file
 
@@ -92,7 +92,7 @@ Interfaces = eth0
 Port_Base = 50000
 ```
 
-Sometimes you have to stop the ueye daemon an then start it again
+- Sometimes you have to stop the ueye daemon an then start it again
 ```shell
 $ sudo /etc/init.d/ueyeethdrc stop
 $ sudo /etc/init.d/ueyeethdrc start
