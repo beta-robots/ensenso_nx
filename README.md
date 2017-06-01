@@ -10,12 +10,12 @@ The package has been tested with the following dependencies:
 * CMake + gcc
 * [ROS Kinetic](http://wiki.ros.org/kinetic)
 * [Point Cloud Library v1.7](http://www.pointclouds.org/) (shipped with ROS Kinetic)
-* UEYE driver (camera interface from manufacturer IDS)
-* Ensenso SDK (propietary library from manufacturer IDS)
+* UEYE driver 4.81.1 (camera interface from manufacturer IDS)
+* Ensenso SDK 1.3.18 and 2.0.140 (propietary library from manufacturer IDS)
 
 To install the ueye driver and tools:
 
-1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.80.2_Linux_64.tgz)
+1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.81.1_Linux_64.tgz)
 2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
 ```shell
 $ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
@@ -23,15 +23,28 @@ $ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
 
 To install Ensenso SDK dependency:
 
-1. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file EnsensoSDK-1.3.180-x64.deb)
-2. Install it with
+1a. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
+
+1b. Install it with
 ```shell
-$ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
+$ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
 ```
-3. The installation above does not copy the file FindEnsenso.cmake to the CMake Modules folder, so we have to do that manually:
+
+2a. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
+
+2b. Install it with
 ```shell
-$ to do with a single command ....
+sudo dpkg -i /home/andreu/Desktop/codemeter_6.40.2402.501_amd64.deb
 ```
+
+3a. At the end of your ~/.bashrc file, add the following line: 
+```shell
+export ENSENSO_INSTALL=/opt/ensenso
+```
+
+3b. Do not hesitate to source again your .bashrc, or open a new terminal. 
+
+
 
 
 ### Download and Build This ROS package
@@ -49,20 +62,21 @@ Start the ueye daemon (in case it didn't started on system boot):
 ```shell
 $ sudo /etc/init.d/ueyeethdrc start
 ```
-Check the camera is there with the IDS application nxView
-```shell
-$ nxView
-```
-Run the node (by default a rviz window will appear)
+Decide whether you want to operate the camera as a publisher or as a server, by setting the run_mode parameter of the config/ensenso_nx_params.yaml file. Thereafter, run the node (by default a rviz window will appear)
 ```shell
 $ roslaunch ensenso_nx ensenso_nx.launch
 ```
-If you are operating the node in run mode "SERVER", from another terminal please request a Point Cloud capture with a given exposure value and dense point cloud flag:
+If you are running the node in mode "SERVER", from another terminal please request a Point Cloud capture, providing the dense point cloud flag and a given exposure value (0 meaning autoexposure):
 ```shell
-$ rosservice call /ensenso_nx/ensenso_server "exposure: 30 dense_cloud: true"
+$ rosservice call /ensenso_nx/ensenso_server "dense_cloud: false exposure: 0"
 ```
 
 ### Troubleshooting
+The IDS application nxView shows 3D realtime data, and allows to manage all parameters involved in the stereo computation.
+```shell
+$ nxView
+```
+
 Check that the IP of the computer and that of the camera are in the same network. To manually set the IP of the camera, or manage other configurations, go to:
 ```shell
 $ ueyecameramanager
