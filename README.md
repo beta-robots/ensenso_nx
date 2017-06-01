@@ -10,65 +10,90 @@ The package has been tested with the following dependencies:
 * CMake + gcc
 * [ROS Kinetic](http://wiki.ros.org/kinetic)
 * [Point Cloud Library v1.7](http://www.pointclouds.org/) (shipped with ROS Kinetic)
-* UEYE driver (camera interface from manufacturer IDS)
-* Ensenso SDK (propietary library from manufacturer IDS)
+* UEYE driver 4.81.1 (camera interface from manufacturer IDS)
+* Ensenso SDK 1.3.18 and 2.0.140 (propietary library from manufacturer IDS)
+* [Forked version](https://github.com/beta-robots/common_msgs) of ROS sensor_msgs, with definition of SnapshotCloud.srv 
 
-To install the ueye driver and tools:
+To install the latest three dependencies of the above list: 
 
-1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.80.2_Linux_64.tgz)
+1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.81.1_Linux_64.tgz)
+
 2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
 ```shell
-$ sudo sh ./ueyesdk-setup-4.80-eth-amd64.gz.run
+$ sudo sh ./ueyesdk-setup-4.81.01-eth-amd64.gz.run
 ```
 
-To install Ensenso SDK dependency:
+3. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
 
-1. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file EnsensoSDK-1.3.180-x64.deb)
-2. Install it with
+4. Install it with
 ```shell
-$ sudo dpkg -i EnsensoSDK-1.3.180-x64.deb
+$ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
 ```
-3. The installation above does not copy the file FindEnsenso.cmake to the CMake Modules folder, so we have to do that manually:
+
+5. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
+
+6. Install it with
 ```shell
-$ to do with a single command ....
+sudo dpkg -i /home/andreu/Desktop/codemeter_6.40.2402.501_amd64.deb
+```
+
+7. Clone to your ROS workspace /src the forked version of common_msgs
+```shell
+$ git clone https://github.com/beta-robots/common_msgs.git
+```
+
+8. Build them with 
+```shell
+$ catkin_make --only-pkg-with-deps common_msgs
 ```
 
 
-### Download and Build This ROS package
-Download to your ROS workspace /src, with the command:
+### Download and Build this ROS package
+1. At the end of your ~/.bashrc file, add the following line: 
+```shell
+export ENSENSO_INSTALL=/opt/ensenso
+```
+
+2. Do not forget to source again your .bashrc, or open a new terminal. 
+
+3. Download to your ROS workspace /src, with the command:
 ```shell
 $ git clone https://github.com/beta-robots/ensenso_nx.git
 ```
-and from your ROS workspace, build it with:
+
+4. and from your ROS workspace, build it with:
 ```shell
 $ catkin_make --only-pkg-with-deps ensenso_nx
 ```
 
 ### Camera Operation
-Start the ueye daemon (in case it didn't started on system boot):
+1. Start the ueye daemon (in case it didn't started on system boot):
 ```shell
 $ sudo /etc/init.d/ueyeethdrc start
 ```
-Check the camera is there with the IDS application nxView
-```shell
-$ nxView
-```
-Run the node (by default a rviz window will appear)
+
+2. Decide whether you want to operate the camera as a publisher or as a server, by setting the run_mode parameter of the config/ensenso_nx_params.yaml file. Thereafter, run the node (by default a rviz window will appear)
 ```shell
 $ roslaunch ensenso_nx ensenso_nx.launch
 ```
-If you are operating the node in run mode "SERVER", from another terminal please request a Point Cloud capture with a given exposure value and dense point cloud flag:
+
+3. If you are running the node in mode "SERVER", from another terminal please request a Point Cloud capture, providing the dense point cloud flag and a given exposure value (0 meaning autoexposure):
 ```shell
-$ rosservice call /ensenso_nx/ensenso_server "exposure: 30 dense_cloud: true"
+$ rosservice call /ensenso_nx/ensenso_server "dense_cloud: false exposure: 0"
 ```
 
 ### Troubleshooting
-Check that the IP of the computer and that of the camera are in the same network. To manually set the IP of the camera, or manage other configurations, go to:
+- The IDS application nxView shows 3D realtime data, and allows to manage all parameters involved in the stereo computation.
+```shell
+$ nxView
+```
+
+- Check that the IP of the computer and that of the camera are in the same network. To manually set the IP of the camera, or manage other configurations, go to:
 ```shell
 $ ueyecameramanager
 ```
 
-In some cases you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port. For instance, if you are using eth0 interface, the file should look like:
+- In some cases you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port. For instance, if you are using eth0 interface, the file should look like:
 ```shell
 ;ueye configuration file
 
@@ -79,7 +104,7 @@ Interfaces = eth0
 Port_Base = 50000
 ```
 
-Sometimes you have to stop the ueye daemon an then start it again
+- Sometimes you have to stop the ueye daemon an then start it again
 ```shell
 $ sudo /etc/init.d/ueyeethdrc stop
 $ sudo /etc/init.d/ueyeethdrc start
