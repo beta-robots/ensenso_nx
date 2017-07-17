@@ -50,19 +50,25 @@ $ catkin_make --only-pkg-with-deps common_msgs
 
 
 ### Download and Build this ROS package
-1. At the end of your ~/.bashrc file, add the following line:
+1. Make sure that your ~/.bashrc contains these lines (the order is important):
+```shell
+$ source /opt/ros/kinetic/setup.bash
+$ source /home/user_name/catkin_ws/devel/setup.bash
+```
+
+2. At the end of your ~/.bashrc file, add the following line:
 ```shell
 export ENSENSO_INSTALL=/opt/ensenso
 ```
 
-2. Do not forget to source again your .bashrc, or open a new terminal.
+3. Do not forget to source again your .bashrc, or open a new terminal.
 
-3. Download to your ROS workspace /src, with the command:
+4. Download this repository to your ROS workspace /src, with the command:
 ```shell
 $ git clone https://github.com/beta-robots/ensenso_nx.git
 ```
 
-4. and from your ROS workspace, build it with:
+5. and from your ROS workspace, build it with:
 ```shell
 $ catkin_make --only-pkg-with-deps ensenso_nx
 ```
@@ -73,18 +79,12 @@ $ catkin_make --only-pkg-with-deps ensenso_nx
 $ sudo /etc/init.d/ueyeethdrc start
 ```
 
-2. Make sure that your /.bashrc contains these lines (the order is important):
-```shell
-$ source /opt/ros/kinetic/setup.bash
-$ source /home/user_name/catkin_ws/devel/setup.bash
-```
-
-3. Decide whether you want to operate the camera as a publisher or as a server, by setting the run_mode parameter of the config/ensenso_nx_params.yaml file. Thereafter, run the node (by default a rviz window will appear)
+2. Decide whether you want to operate the camera as a publisher or as a server, by setting the run_mode parameter of the config/ensenso_nx_params.yaml file. Thereafter, run the node (by default a rviz window will appear)
 ```shell
 $ roslaunch ensenso_nx ensenso_nx.launch
 ```
 
-4. If you are running the node in mode "SERVER", from another terminal please request a Point Cloud capture, providing the dense point cloud flag and a given exposure value (0 meaning autoexposure):
+3. If you are running the node in mode "SERVER", from another terminal request a Point Cloud capture, providing the dense point cloud flag and a given exposure value (0 meaning autoexposure):
 ```shell
 $ rosservice call /ensenso_nx/ensenso_server "dense_cloud: false exposure: 0"
 ```
