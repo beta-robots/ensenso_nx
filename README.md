@@ -13,9 +13,9 @@ This package works correctly with the following dependencies:
 * [Point Cloud Library v1.7](http://www.pointclouds.org/) (shipped with ROS Kinetic)
 * UEYE driver 4.81.1 (camera interface from manufacturer IDS)
 * Ensenso SDK 1.3.18 and 2.0.140 (propietary library from manufacturer IDS)
-* [Forked version](https://github.com/beta-robots/common_msgs) of ROS sensor_msgs, with definition of SnapshotCloud.srv 
+* [Forked version](https://github.com/beta-robots/common_msgs) of ROS sensor_msgs, with definition of SnapshotCloud.srv
 
-To install the latest three dependencies of the above list: 
+To install the latest three dependencies of the above list:
 
 1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.81.1_Linux_64.tgz)
 
@@ -24,18 +24,18 @@ To install the latest three dependencies of the above list:
 $ sudo sh ./ueyesdk-setup-4.81.01-eth-amd64.gz.run
 ```
 
-3. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
+3. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
 
-4. Install it with
+4. Move to the folder where you installed your deb file and then Install it with:
 ```shell
-$ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
+sudo dpkg -i codemeter_6.40.2402.501_amd64.deb
 ```
 
-5. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
+5. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
 
 6. Install it with
 ```shell
-sudo dpkg -i /home/andreu/Desktop/codemeter_6.40.2402.501_amd64.deb
+$ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
 ```
 
 7. Clone to your ROS workspace /src the forked version of common_msgs
@@ -43,19 +43,19 @@ sudo dpkg -i /home/andreu/Desktop/codemeter_6.40.2402.501_amd64.deb
 $ git clone https://github.com/beta-robots/common_msgs.git
 ```
 
-8. Build them with 
+8. Build them with
 ```shell
 $ catkin_make --only-pkg-with-deps common_msgs
 ```
 
 
 ### Download and Build this ROS package
-1. At the end of your ~/.bashrc file, add the following line: 
+1. At the end of your ~/.bashrc file, add the following line:
 ```shell
 export ENSENSO_INSTALL=/opt/ensenso
 ```
 
-2. Do not forget to source again your .bashrc, or open a new terminal. 
+2. Do not forget to source again your .bashrc, or open a new terminal.
 
 3. Download to your ROS workspace /src, with the command:
 ```shell
@@ -73,12 +73,18 @@ $ catkin_make --only-pkg-with-deps ensenso_nx
 $ sudo /etc/init.d/ueyeethdrc start
 ```
 
-2. Decide whether you want to operate the camera as a publisher or as a server, by setting the run_mode parameter of the config/ensenso_nx_params.yaml file. Thereafter, run the node (by default a rviz window will appear)
+2. Make sure that your /.bashrc contains these lines (the order is important):
+```shell
+$ source /opt/ros/kinetic/setup.bash
+$ source /home/user_name/catkin_ws/devel/setup.bash
+```
+
+3. Decide whether you want to operate the camera as a publisher or as a server, by setting the run_mode parameter of the config/ensenso_nx_params.yaml file. Thereafter, run the node (by default a rviz window will appear)
 ```shell
 $ roslaunch ensenso_nx ensenso_nx.launch
 ```
 
-3. If you are running the node in mode "SERVER", from another terminal please request a Point Cloud capture, providing the dense point cloud flag and a given exposure value (0 meaning autoexposure):
+4. If you are running the node in mode "SERVER", from another terminal please request a Point Cloud capture, providing the dense point cloud flag and a given exposure value (0 meaning autoexposure):
 ```shell
 $ rosservice call /ensenso_nx/ensenso_server "dense_cloud: false exposure: 0"
 ```
@@ -110,3 +116,4 @@ Port_Base = 50000
 $ sudo /etc/init.d/ueyeethdrc stop
 $ sudo /etc/init.d/ueyeethdrc start
 ```
+
