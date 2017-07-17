@@ -52,8 +52,8 @@ $ catkin_make --only-pkg-with-deps common_msgs
 ### Download and Build this ROS package
 1. Make sure that your ~/.bashrc contains these lines (the order is important):
 ```shell
-$ source /opt/ros/kinetic/setup.bash
-$ source /home/user_name/catkin_ws/devel/setup.bash
+source /opt/ros/kinetic/setup.bash
+source /home/user_name/catkin_ws/devel/setup.bash
 ```
 
 2. At the end of your ~/.bashrc file, add the following line:
