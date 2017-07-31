@@ -3,7 +3,7 @@
 namespace EnsensoNx
 {
 
-Device::Device()
+Device::Device(const std::string & _serial_num)
 {
     std::cout << "EnsensoNx::Device: Opening camera ..." << std::endl;
 
@@ -11,7 +11,7 @@ Device::Device()
     nxLibInitialize(true);
 
     // Create an object referencing the camera's tree item, for easier access:
-    camera_ = nx_lib_root_[itmCameras][itmBySerialNo][0];
+    camera_ = nx_lib_root_[itmCameras][itmBySerialNo][_serial_num];
     if (!camera_.exists() || (camera_[itmType] != valStereo))
     {
         std::cout << "EnsensoNx::Device: Camera not found. Please connect a single stereo camera to your computer" << std::endl;

@@ -4,6 +4,7 @@ EnsensoNxNode::EnsensoNxNode():
     nh_(ros::this_node::getName())
 {
     int param_int;
+	std::string param_str;
 
     //init the point cloud publisher
     cloud_publisher_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZ> >("ensenso_cloud", 1);
@@ -11,8 +12,11 @@ EnsensoNxNode::EnsensoNxNode():
     //init server
     cloud_server_ = nh_.advertiseService("ensenso_server", &EnsensoNxNode::pointCloudServiceCallback, this);
 
-    //create pointer to ensenso device
-    camera_ = new EnsensoNx::Device();
+    //Allocate the ensenso device with the provided serial number
+	nh_.getParam("serial_number", param_str);
+	//std::cout << "serial_number from yaml : " << param_str << std::endl;
+	//camera_ = new EnsensoNx::Device("160676");
+    camera_ = new EnsensoNx::Device(param_str);
 
     //configure node according yaml params
     nh_.getParam("run_mode", param_int); this->run_mode_ = (RunMode)param_int;

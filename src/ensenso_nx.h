@@ -59,10 +59,10 @@ class Device
         std::vector<float> raw_points_; //raw xyz points from camera
 
     public:
-        /** \brief Constructor
-         * Constructor
+        /** \brief Constructor with serial number
+         * Constructor with serial number
         **/
-        Device();
+        Device(const std::string & _serial_num);
 
         /** \brief Destructor
          * Destructor
