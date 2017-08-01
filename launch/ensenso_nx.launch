@@ -34,7 +34,8 @@
 	            pkg="robot_state_publisher"
 	            type="robot_state_publisher"
 	            name="robot_state_publisher" >
-	            <param name="publish_frequency" value="2" />
+	            <param name="publish_frequency" value="2"/>
+				<param name="~tf_prefix" value="$(arg namespace)" type="str"/>
 	        </node>
 
 	    </group>
@@ -44,12 +45,13 @@
 			command="load"
 			file="$(arg config_file)"/>
 
-		<!-- ensenso_nx node-->	
+		<!-- ensenso_nx node-->
 	    <node
 	        pkg="ensenso_nx"
 	        type="ensenso_nx"
 	        name="ensenso_nx"
 	        output="screen">
+			<param name="~tf_prefix" value="$(arg namespace)" type="str"/>
 	    </node>
 
 	</group>

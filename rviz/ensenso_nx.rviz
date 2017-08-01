@@ -31,8 +31,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.258680105
-        Min Value: -0.0235925913
+        Max Value: 0.257843137
+        Min Value: -0.022963047
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -98,7 +98,7 @@ Visualization Manager:
           Show Trail: false
       Name: EnsensoN35
       Robot Description: ensenso_nx_1/robot_description
-      TF Prefix: ""
+      TF Prefix: ensenso_nx_1
       Update Interval: 0
       Value: true
       Visual Enabled: true
@@ -107,17 +107,17 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        single_ensenso_n35_body:
+        ensenso_nx_1/single_ensenso_n35_body:
           Value: true
-        single_ensenso_n35_emitter:
+        ensenso_nx_1/single_ensenso_n35_emitter:
           Value: true
-        single_ensenso_n35_lens_left:
+        ensenso_nx_1/single_ensenso_n35_lens_left:
           Value: true
-        single_ensenso_n35_lens_right:
+        ensenso_nx_1/single_ensenso_n35_lens_right:
           Value: true
-        single_ensenso_n35_virtual_cloud:
+        ensenso_nx_1/single_ensenso_n35_virtual_cloud:
           Value: true
-        world:
+        ensenso_nx_1/world:
           Value: true
       Marker Scale: 0.100000001
       Name: TF
@@ -125,22 +125,22 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        world:
-          single_ensenso_n35_body:
-            single_ensenso_n35_emitter:
+        ensenso_nx_1/world:
+          ensenso_nx_1/single_ensenso_n35_body:
+            ensenso_nx_1/single_ensenso_n35_emitter:
               {}
-            single_ensenso_n35_lens_left:
+            ensenso_nx_1/single_ensenso_n35_lens_left:
               {}
-            single_ensenso_n35_lens_right:
+            ensenso_nx_1/single_ensenso_n35_lens_right:
               {}
-            single_ensenso_n35_virtual_cloud:
+            ensenso_nx_1/single_ensenso_n35_virtual_cloud:
               {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
-    Fixed Frame: single_ensenso_n35_virtual_cloud
+    Fixed Frame: ensenso_nx_1/single_ensenso_n35_virtual_cloud
     Frame Rate: 10
   Name: root
   Tools:
@@ -161,24 +161,24 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 2.84944415
+      Distance: 2.34066868
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.0858363509
-        Y: -0.000261127949
-        Z: -1.78813991e-07
+        X: -0.00660655648
+        Y: 0.0840771496
+        Z: -1.49011669e-07
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.560202658
+      Pitch: 1.03520191
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
-      Yaw: 1.97856891
+      Yaw: 1.00356817
     Saved: ~
 Window Geometry:
   Displays:

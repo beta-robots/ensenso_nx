@@ -5,6 +5,7 @@ EnsensoNxNode::EnsensoNxNode():
 {
     int param_int;
 	std::string param_str;
+	std::string ns_str;
 
     //init the point cloud publisher
     cloud_publisher_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZ> >("ensenso_cloud", 1);
@@ -19,7 +20,11 @@ EnsensoNxNode::EnsensoNxNode():
     //configure node according yaml params
     ros::param::get("run_mode", param_int); this->run_mode_ = (RunMode)param_int;
     ros::param::get("rate", this->rate_);
-    ros::param::get("frame_name", this->frame_name_);
+	ns_str = ros::this_node::getNamespace();
+	ns_str.erase (ns_str.begin()); //it starts with "//", so one slash has to be removed. Maybe it returns concatenation of ns from node and nodehandle
+    ros::param::get("frame_name", param_str);
+	this->frame_name_ = ns_str + "/" + param_str;
+	std::cout << this->frame_name_ << std::endl;
     ros::param::get("auto_exposure", this->capture_params_.auto_exposure_);
     ros::param::get("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
     ros::param::get("dense_cloud", param_int); this->capture_params_.dense_cloud_ = (bool)param_int;
