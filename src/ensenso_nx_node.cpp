@@ -1,7 +1,7 @@
 #include "ensenso_nx_node.h"
 
 EnsensoNxNode::EnsensoNxNode():
-    nh_(ros::this_node::getName())
+    nh_() //node handle without additional namespace
 {
     int param_int;
 	std::string param_str;
@@ -13,19 +13,16 @@ EnsensoNxNode::EnsensoNxNode():
     cloud_server_ = nh_.advertiseService("ensenso_server", &EnsensoNxNode::pointCloudServiceCallback, this);
 
     //Allocate the ensenso device with the provided serial number
-	nh_.getParam("serial_number", param_str);
-	//std::cout << "serial_number from yaml : " << param_str << std::endl;
-	//camera_ = new EnsensoNx::Device("160676");
+	ros::param::get("serial_number", param_str);
     camera_ = new EnsensoNx::Device(param_str);
 
     //configure node according yaml params
-    nh_.getParam("run_mode", param_int); this->run_mode_ = (RunMode)param_int;
-    //std::cout << __LINE__ << ": param_int: " << param_int << "; run_mode_: " << run_mode_ << std::endl;
-    nh_.getParam("rate", this->rate_);
-    nh_.getParam("frame_name", this->frame_name_);
-    nh_.getParam("auto_exposure", this->capture_params_.auto_exposure_);
-    nh_.getParam("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
-    nh_.getParam("dense_cloud", param_int); this->capture_params_.dense_cloud_ = (bool)param_int;
+    ros::param::get("run_mode", param_int); this->run_mode_ = (RunMode)param_int;
+    ros::param::get("rate", this->rate_);
+    ros::param::get("frame_name", this->frame_name_);
+    ros::param::get("auto_exposure", this->capture_params_.auto_exposure_);
+    ros::param::get("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
+    ros::param::get("dense_cloud", param_int); this->capture_params_.dense_cloud_ = (bool)param_int;
     if ( run_mode_ == PUBLISHER )
     {
         camera_->configureCapture(this->capture_params_);

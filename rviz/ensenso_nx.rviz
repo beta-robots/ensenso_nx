@@ -5,7 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded: ~
       Splitter Ratio: 0.5
-    Tree Height: 355
+    Tree Height: 745
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
@@ -31,8 +31,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.259098053
-        Min Value: -0.0292831659
+        Max Value: 0.258680105
+        Min Value: -0.0235925913
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -53,7 +53,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00100000005
       Style: Points
-      Topic: /ensenso_nx/ensenso_cloud
+      Topic: /ensenso_nx_1/ensenso_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -97,7 +97,7 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
       Name: EnsensoN35
-      Robot Description: robot_description
+      Robot Description: ensenso_nx_1/robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -161,24 +161,24 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 2.5928483
+      Distance: 2.84944415
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.105109513
-        Y: -0.0103585124
-        Z: -6.55651149e-07
+        X: -0.0858363509
+        Y: -0.000261127949
+        Z: -1.78813991e-07
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.910202563
+      Pitch: 0.560202658
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
-      Yaw: 2.23856616
+      Yaw: 1.97856891
     Saved: ~
 Window Geometry:
   Displays:
