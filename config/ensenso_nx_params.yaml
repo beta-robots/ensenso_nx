@@ -2,10 +2,10 @@
 #*************** ensenso_nx node and capture parameters ************************
 
 #serial number (i.e. 160676 or 171241)
-serial_number: "160676"
+serial_number: "171241"
 
 #run mode: run mode: 0->SERVER, 1->PUBLISHER
-run_mode: 1
+run_mode: 0
 
 #loop rate in hz (good values: 10 when SERVER, below 1 when PUBLISHER)
 rate: 1

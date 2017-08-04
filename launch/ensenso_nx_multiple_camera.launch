@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+
+<!-- Launches ensenso_nx capture node, and visualization according rviz param  -->
+
+<launch>
+
+  <!-- User Args  -->
+  <arg name="rviz" default="true" doc="rviz visualization or not"/>
+  <arg name="model_tf" default="true" doc="3D model visualization and tf"/>
+  <arg name="config_file" default="$(find ensenso_nx)/config/ensenso_nx_params.yaml" doc="YAML file with default configuration parameters"/>
+  <arg name="namespace_1" default="ensenso_nx_1" doc="Namespace for topics, frames and params for camera 1"/>
+  <arg name="namespace_2" default="ensenso_nx_2" doc="Namespace for topics, frames and params for camera 2"/>
+
+  <!-- CAMERA 1 -->
+
+  <!--Set the namespace for camera 1-->
+  <group ns="$(arg namespace_1)">
+
+    <!--3D model as a robot robot description and tf-->
+    <group if="$(arg model_tf)">
+
+      <!-- Load robot description -->
+      <param
+        name="robot_description"
+        command="$(find xacro)/xacro --inorder $(find ensenso_nx)/urdf/single_ensenso_n35.urdf"/>
+
+      <!-- Run joint state publisher (Gets robot_description from parameter server)-->
+      <node
+        pkg="joint_state_publisher"
+        type="joint_state_publisher"
+        name="joint_state_publisher" >
+        <param name="publish_frequency" value="2" />
+      </node>
+
+      <!-- Run state publisher (Gets robot_description from parameter server)-->
+      <node
+        pkg="robot_state_publisher"
+        type="robot_state_publisher"
+        name="robot_state_publisher" >
+        <param name="publish_frequency" value="2"/>
+        <param name="~tf_prefix" value="$(arg namespace_1)" type="str"/>
+      </node>
+
+    </group>
+
+    <!-- default ensenso_nx node parameters-->
+    <rosparam
+      command="load"
+      file="$(arg config_file)"/>
+
+    <!-- specific ensenso_nx node parameters for camera 1-->
+    <param name="serial_number" value="171241" type="str"/>
+    <param name="run_mode" value="1" type="int" />
+
+    <!-- ensenso_nx node for camera 1-->
+    <node
+      pkg="ensenso_nx"
+      type="ensenso_nx"
+      name="ensenso_nx"
+      output="screen">
+      <param name="~tf_prefix" value="$(arg namespace_1)" type="str"/>
+    </node>
+
+  </group>
+
+  <!-- CAMERA 2 -->
+
+  <!--Set the namespace for camera 2-->
+  <group ns="$(arg namespace_2)">
+
+    <!--3D model as a robot robot description and tf-->
+    <group if="$(arg model_tf)">
+
+      <!-- Load robot description -->
+      <param
+        name="robot_description"
+        command="$(find xacro)/xacro --inorder $(find ensenso_nx)/urdf/single_ensenso_n35.urdf"/>
+
+      <!-- Run joint state publisher (Gets robot_description from parameter server)-->
+      <node
+        pkg="joint_state_publisher"
+        type="joint_state_publisher"
+        name="joint_state_publisher" >
+        <param name="publish_frequency" value="2" />
+      </node>
+
+      <!-- Run state publisher (Gets robot_description from parameter server)-->
+      <node
+        pkg="robot_state_publisher"
+        type="robot_state_publisher"
+        name="robot_state_publisher" >
+        <param name="publish_frequency" value="2"/>
+        <param name="~tf_prefix" value="$(arg namespace_2)" type="str"/>
+      </node>
+
+    </group>
+
+    <!-- default ensenso_nx node parameters-->
+    <rosparam
+      command="load"
+      file="$(arg config_file)"/>
+
+    <!-- specific ensenso_nx node parameters for camera 2-->
+    <param name="serial_number" value="160676" type="str"/>
+    <param name="run_mode" value="1" type="int" />
+
+    <!-- ensenso_nx node for camera 2-->
+    <node
+      pkg="ensenso_nx"
+      type="ensenso_nx"
+      name="ensenso_nx"
+      output="screen">
+      <param name="~tf_prefix" value="$(arg namespace_2)" type="str"/>
+    </node>
+
+  </group>
+
+  <!-- RELATIVE POSE BETWEEN CAMERAS -->
+  <node
+    pkg="tf"
+    type="static_transform_publisher"
+    name="transform_between_cameras"
+    args="1 0 0 0 0 0 $(arg namespace_1)/world $(arg namespace_2)/world 100" />
+
+  <!-- VISUALIZATION -->
+  <group if="$(arg rviz)">
+    <node
+      name="rviz"
+      pkg="rviz"
+      type="rviz"
+      args="-d $(find ensenso_nx)/rviz/ensenso_nx_multiple_camera.rviz">
+    </node>
+  </group>
+
+</launch>
