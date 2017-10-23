@@ -4,7 +4,7 @@ EnsensoNxNode::EnsensoNxNode():
     nh_() //node handle without additional namespace
 {
     int param_int;
-	std::string param_str;
+	std::string param_str, json_file_name;
 	std::string ns_str;
 
     //init the point cloud publisher
@@ -28,10 +28,18 @@ EnsensoNxNode::EnsensoNxNode():
     ros::param::get("auto_exposure", this->capture_params_.auto_exposure_);
     ros::param::get("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
     ros::param::get("dense_cloud", param_int); this->capture_params_.dense_cloud_ = (bool)param_int;
-    if ( run_mode_ == PUBLISHER )
-    {
-        camera_->configureCapture(this->capture_params_);
-    }
+	ros::param::get("json_file_name", json_file_name);
+	if(json_file_name != "")
+	{
+		camera_->configureFromJson(json_file_name); 
+	}
+	else
+	{
+		if ( run_mode_ == PUBLISHER )
+		{
+			camera_->configureCapture(this->capture_params_);
+		}
+	}
 
     //print configs
     std::cout << "ROS EnsensoNxNode Settings: " << std::endl;

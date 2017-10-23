@@ -21,3 +21,6 @@ exposure_time: 0
 
 #Dense cloud: 1->Node returns a dense cloud (ordered). 0->Node returns a non-dense cloud (unordered)
 dense_cloud: 0
+
+#JSON file name for camera configuration
+json_file_name: "/home/andreu/Desktop/ensenso.json"

@@ -10,6 +10,7 @@
 
 //std
 #include <iostream>
+#include <fstream>
 #include <cmath>
 
 namespace EnsensoNx
@@ -68,6 +69,12 @@ class Device
          * Destructor
         **/
         ~Device();
+
+		/** \brief Set configuration from a JSON file
+         * Set configuration from a JSON file
+         * \param _json_file_name: JSON file full path name
+        **/
+		void configureFromJson(const std::string & _json_file_name);
 
         /** \brief Set configuration for point cloud capture
          * Set configuration for point cloud capture

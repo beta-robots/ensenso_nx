@@ -40,6 +40,30 @@ Device::~Device()
     nxLibFinalize();
 }
 
+void Device::configureFromJson(const std::string & _json_file_name)
+{
+	int ret_code;
+	std::string line("");
+	std::string json_str("");
+	std::ifstream json_file(_json_file_name);
+
+	//read JSON file and set content to a single string
+	while (!json_file.eof())
+	{
+		std::getline(json_file,line);
+		json_str += line;
+	}
+
+	//set JSON string to camera
+	camera_.setJson(&ret_code, json_str); //void setJson(int* returnCode, std::string const& jsonValue, bool onlyWriteableNodes = false) const
+
+	//set capture_params_ to keep real values stored in the camera
+	capture_params_.auto_exposure_ = camera_[itmParameters][itmCapture][itmAutoExposure].asBool();
+	capture_params_.exposure_time_ = (unsigned int)camera_[itmParameters][itmCapture][itmExposure].asInt();
+	std::cout << "Device::configureFromJson()" << std::endl;
+	capture_params_.print();
+}
+
 void Device::configureCapture(const CaptureParams & _params)
 {
     //update class member
