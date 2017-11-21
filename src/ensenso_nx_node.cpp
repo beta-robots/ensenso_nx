@@ -6,6 +6,7 @@ EnsensoNxNode::EnsensoNxNode():
     int param_int;
 	std::string param_str;
 	std::string ns_str;
+	std::ostringstream full_frame_name;
 
     //init the point cloud publisher
     cloud_publisher_ = nh_.advertise<pcl::PointCloud<pcl::PointXYZ> >("ensenso_cloud", 1);
@@ -20,18 +21,18 @@ EnsensoNxNode::EnsensoNxNode():
     //configure node according yaml params
     ros::param::get("run_mode", param_int); this->run_mode_ = (RunMode)param_int;
     ros::param::get("rate", this->rate_);
-	  ns_str = ros::this_node::getNamespace();
-	  ns_str.erase (ns_str.begin()); //it starts with "//", so one slash has to be removed. Maybe it returns concatenation of ns from node and nodehandle
+  	ns_str = ros::this_node::getNamespace();
+	ns_str.erase (ns_str.begin()); //it starts with "//", so one slash has to be removed. Maybe it returns concatenation of ns from node and nodehandle
     ros::param::get("frame_name", param_str);
-	  this->frame_name_ = param_str;
-	  std::cout << this->frame_name_ << std::endl;
+  	full_frame_name << ns_str << "/" << param_str;
+	this->frame_name_ = full_frame_name.str();
     ros::param::get("auto_exposure", this->capture_params_.auto_exposure_);
     ros::param::get("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
     ros::param::get("dense_cloud", param_int); this->capture_params_.dense_cloud_ = (bool)param_int;
-    if ( run_mode_ == PUBLISHER )
-    {
+//    if ( run_mode_ == PUBLISHER )
+//    {
         camera_->configureCapture(this->capture_params_);
-    }
+//    }
 
     //print configs
     std::cout << "ROS EnsensoNxNode Settings: " << std::endl;
@@ -40,7 +41,7 @@ EnsensoNxNode::EnsensoNxNode():
     if ( run_mode_ == PUBLISHER ) //in SERVER, rate is not applicable, and other capture params are set at the request message
     {
         std::cout << "\trate [hz]: \t" << rate_  << std::endl;
-        std::cout << "\tauto_exposure [hz]: \t" << capture_params_.auto_exposure_ << std::endl;
+        std::cout << "\tauto_exposure [t/f]: \t" << capture_params_.auto_exposure_ << std::endl;
         if ( !capture_params_.auto_exposure_ )
         {
             std::cout << "\texposure [ms]: \t" << capture_params_.exposure_time_ << std::endl;
@@ -89,6 +90,8 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
                                               sensor_msgs::SnapshotCloud::Response & _reply)
 {
     //configure capture according request
+	//TO DO !! Setting exposure just before capture does not work prperly . 
+	/*
     if (_request.exposure == 0)
     {
         capture_params_.auto_exposure_ = true;
@@ -100,8 +103,10 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
     }
     capture_params_.dense_cloud_ = _request.dense_cloud;
     camera_->configureCapture(capture_params_);
+	*/
 
     //Get a single capture from camera and set the reply
+	cloud_.clear();
     if ( camera_->capture(cloud_) == 1 )
     {
         //get time
@@ -109,6 +114,10 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
         cloud_.header.stamp = (pcl::uint64_t)(ts.toSec()*1e6); //TODO: should be set by the EnsensoNx::Device class
         cloud_.header.frame_id = frame_name_;
         pcl::toROSMsg(cloud_, _reply.cloud); //see pcl-ros conversions at http://wiki.ros.org/action/fullsearch/pcl/Overview
+
+		//debugging
+		cloud_publisher_.publish(cloud_);
+		std::cout << "cloud_.size(): " << cloud_.size() << std::endl;
     }
     else
     {

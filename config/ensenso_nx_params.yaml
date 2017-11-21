@@ -20,4 +20,4 @@ auto_exposure: True
 exposure_time: 0
 
 #Dense cloud: 1->Node returns a dense cloud (ordered). 0->Node returns a non-dense cloud (unordered)
-dense_cloud: 0
+dense_cloud: 1

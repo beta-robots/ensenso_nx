@@ -31,8 +31,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 0.257843137
-        Min Value: -0.022963047
+        Max Value: 0.989434242
+        Min Value: 0.675029695
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -53,7 +53,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.00100000005
       Style: Points
-      Topic: /ensenso_nx_1/ensenso_cloud
+      Topic: /ensenso_nx/ensenso_cloud
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -68,34 +68,6 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        single_ensenso_n35_body:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        single_ensenso_n35_emitter:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        single_ensenso_n35_lens_left:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        single_ensenso_n35_lens_right:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        single_ensenso_n35_virtual_cloud:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        world:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
       Name: EnsensoN35
       Robot Description: ensenso_nx_1/robot_description
       TF Prefix: ensenso_nx_1
@@ -107,17 +79,17 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: true
-        ensenso_nx_1/single_ensenso_n35_body:
+        ensenso_nx/single_ensenso_n35_body:
           Value: true
-        ensenso_nx_1/single_ensenso_n35_emitter:
+        ensenso_nx/single_ensenso_n35_emitter:
           Value: true
-        ensenso_nx_1/single_ensenso_n35_lens_left:
+        ensenso_nx/single_ensenso_n35_lens_left:
           Value: true
-        ensenso_nx_1/single_ensenso_n35_lens_right:
+        ensenso_nx/single_ensenso_n35_lens_right:
           Value: true
-        ensenso_nx_1/single_ensenso_n35_virtual_cloud:
+        ensenso_nx/single_ensenso_n35_virtual_cloud:
           Value: true
-        ensenso_nx_1/world:
+        ensenso_nx/world:
           Value: true
       Marker Scale: 0.100000001
       Name: TF
@@ -125,22 +97,22 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        ensenso_nx_1/world:
-          ensenso_nx_1/single_ensenso_n35_body:
-            ensenso_nx_1/single_ensenso_n35_emitter:
+        ensenso_nx/world:
+          ensenso_nx/single_ensenso_n35_body:
+            ensenso_nx/single_ensenso_n35_emitter:
               {}
-            ensenso_nx_1/single_ensenso_n35_lens_left:
+            ensenso_nx/single_ensenso_n35_lens_left:
               {}
-            ensenso_nx_1/single_ensenso_n35_lens_right:
+            ensenso_nx/single_ensenso_n35_lens_right:
               {}
-            ensenso_nx_1/single_ensenso_n35_virtual_cloud:
+            ensenso_nx/single_ensenso_n35_virtual_cloud:
               {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 95; 95; 95
-    Fixed Frame: ensenso_nx_1/single_ensenso_n35_virtual_cloud
+    Fixed Frame: ensenso_nx/single_ensenso_n35_virtual_cloud
     Frame Rate: 10
   Name: root
   Tools:
@@ -161,30 +133,31 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 2.34066868
+      Distance: 1.70727503
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.00660655648
-        Y: 0.0840771496
-        Z: -1.49011669e-07
+        X: -0.336265326
+        Y: -0.148487717
+        Z: 8.94069103e-08
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
+      Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.03520191
+      Pitch: 0.825201929
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
-      Yaw: 1.00356817
+      Yaw: 0.508581936
     Saved: ~
 Window Geometry:
   Displays:
-    collapsed: false
+    collapsed: true
   Height: 1056
-  Hide Left Dock: false
+  Hide Left Dock: true
   Hide Right Dock: false
   QMainWindow State: 000000ff00000000fd0000000400000000000001a80000037efc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000006600fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073000000002e0000037e000000e300fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000012f00000373fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000002800000373000000ba00fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b20000000000000000000000020000064000000171fc0100000002fb0000000a0049006d0061006700650000000000000006400000000000000000fb0000000a00560069006500770073030000004e00000080000002e100000197000000030000073f0000004cfc0100000002fb0000000800540069006d006501000000000000073f0000038300fffffffb0000000800540069006d006501000000000000045000000000000000000000073f0000037e00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:

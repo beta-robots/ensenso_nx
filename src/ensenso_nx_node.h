@@ -3,6 +3,7 @@
 
 //std
 #include <iostream>
+#include <sstream>
 
 //this package
 #include "ensenso_nx.h"

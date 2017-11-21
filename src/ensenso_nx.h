@@ -56,7 +56,7 @@ class Device
         NxLibItem nx_lib_root_; // Reference to the API tree root
         NxLibItem camera_; //Reference to the nxlib camera device
 
-        std::vector<float> raw_points_; //raw xyz points from camera
+        //std::vector<float> raw_points_; //raw xyz points from camera
 
     public:
         /** \brief Constructor with serial number

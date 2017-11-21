@@ -8,7 +8,7 @@
     <arg name="rviz" default="true" doc="rviz visualization or not"/>
     <arg name="model_tf" default="true" doc="3D model visualization and tf"/>
     <arg name="config_file" default="$(find ensenso_nx)/config/ensenso_nx_params.yaml" doc="YAML file with configutaion parameters"/>
-	<arg name="namespace" default="ensenso_nx_1" doc="Namespace for topics, frames and params"/>
+	<arg name="namespace" default="ensenso_nx" doc="Namespace for topics, frames and params"/>
 
     <!--Set the namespace-->
 	<group ns="$(arg namespace)">
