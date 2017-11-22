@@ -90,7 +90,7 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
                                               sensor_msgs::SnapshotCloud::Response & _reply)
 {
     //configure capture according request
-	//TO DO !! Setting exposure just before capture does not work prperly . 
+	//TO DO !! Setting exposure just before capture does not work prperly .
 	/*
     if (_request.exposure == 0)
     {
@@ -117,7 +117,7 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
 
 		//debugging
 		cloud_publisher_.publish(cloud_);
-		std::cout << "cloud_.size(): " << cloud_.size() << std::endl;
+		//std::cout << "cloud_.size(): " << cloud_.size() << std::endl;
     }
     else
     {
