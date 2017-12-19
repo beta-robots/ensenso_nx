@@ -24,7 +24,7 @@ EnsensoNxNode::EnsensoNxNode():
   	ns_str = ros::this_node::getNamespace();
 	ns_str.erase (ns_str.begin()); //it starts with "//", so one slash has to be removed. Maybe it returns concatenation of ns from node and nodehandle
     ros::param::get("frame_name", param_str);
-  	full_frame_name << ns_str << "/" << param_str;
+	full_frame_name << "/" << param_str;
 	this->frame_name_ = full_frame_name.str();
     ros::param::get("auto_exposure", this->capture_params_.auto_exposure_);
     ros::param::get("exposure_time", param_int); this->capture_params_.exposure_time_ = (unsigned int)param_int;
