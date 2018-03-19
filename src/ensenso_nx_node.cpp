@@ -102,7 +102,7 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
         capture_params_.exposure_time_ = _request.exposure;
     }*/
     capture_params_.dense_cloud_ = _request.dense_cloud;
-    //camera_->configureCapture(capture_params_);
+    camera_->configureCapture(capture_params_);
 
     //Get a single capture from camera and set the reply
 	cloud_.clear();
