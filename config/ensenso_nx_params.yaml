@@ -1,14 +1,13 @@
-
 #*************** ensenso_nx node and capture parameters ************************
 
 #serial number (i.e. 160676 or 171241)
-serial_number: "171241"
+serial_number: "160676"
 
 #run mode: run mode: 0->SERVER, 1->PUBLISHER
 run_mode: 0
 
 #loop rate in hz (good values: 10 when SERVER, below 1 when PUBLISHER)
-rate: 1
+rate: 0.05
 
 #frame name to which point cloud is referenced (relative, without namespace)
 frame_name: "single_ensenso_n35_body"
@@ -20,4 +19,4 @@ auto_exposure: True
 exposure_time: 0
 
 #Dense cloud: 1->Node returns a dense cloud (ordered). 0->Node returns a non-dense cloud (unordered)
-dense_cloud: 1
+dense_cloud: True
