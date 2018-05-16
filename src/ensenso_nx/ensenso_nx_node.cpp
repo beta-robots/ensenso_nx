@@ -61,13 +61,22 @@ EnsensoNxNode::EnsensoNxNode():
 		}
 		std::cout << "\tdense_cloud: [t/f] \t" << capture_params__.dense_cloud << std::endl;
 	}
+
+	// autostart
+	is_camera_enabled__ = false;
+	std_srvs::SetBool enable_camera;
+	enable_camera.request.data = true;
+	setCameraEnable(enable_camera.request, enable_camera.response);
 }
 
 EnsensoNxNode::~EnsensoNxNode()
 {
-	std_srvs::SetBool close_camera;
-	close_camera.request.data = false;
-	setCameraEnable(close_camera.request, close_camera.response);
+	if(is_camera_enabled__)
+	{
+		std_srvs::SetBool close_camera;
+		close_camera.request.data = false;
+		setCameraEnable(close_camera.request, close_camera.response);
+	}
 }
 
 void EnsensoNxNode::reconfigureCallback(EnsensoNxParamsConfig& __config, uint32_t __level)
@@ -76,12 +85,14 @@ void EnsensoNxNode::reconfigureCallback(EnsensoNxParamsConfig& __config, uint32_
 	{
 	case 0:
 	{
-		frame_name__ = __config.frame_name;
 		std_srvs::SetBool enable_camera;
-		enable_camera.request.data = __config.enable_camera;
+		if( __config.enable_camera )
+			enable_camera.request.data = true;
+		else
+			enable_camera.request.data = false;
 		setCameraEnable(enable_camera.request, enable_camera.response);
+		break;
 	}
-	break;
 	case 1:
 	{
 		if( is_camera_enabled__ )
@@ -89,7 +100,7 @@ void EnsensoNxNode::reconfigureCallback(EnsensoNxParamsConfig& __config, uint32_
 			if( run_mode__ == PUBLISHER_MODE )
 			{
 				publisher_clock__.stop();
-				publisher_clock__.setPeriod( ros::Duration( static_cast<double>(__config.exposure_time) ), false );
+				publisher_clock__.setPeriod( ros::Duration( static_cast<double>(__config.rate) ), false );
 			}
 			capture_params__.auto_exposure = __config.auto_exposure;
 			capture_params__.exposure_time = static_cast<unsigned int>(__config.exposure_time);
@@ -102,19 +113,32 @@ void EnsensoNxNode::reconfigureCallback(EnsensoNxParamsConfig& __config, uint32_
 			grab_locker__.unlock();
 
 			if(run_mode__ == PUBLISHER_MODE )
+			{
+				ROS_INFO("EnsensoNxNode: Mode changed to PUBLISHER_MODE");
 				publisher_clock__.start();
+			}
+			else
+			{
+				ROS_INFO("EnsensoNxNode: Mode changed to SERVER_MODE");
+			}
 		}
 		else
 		{
 			ROS_WARN("EnsensoNxNode ensenso_server service: Camera hasn't been initiliazed, call set_camera to enable it");
 		}
+		break;
 	}
-	break;
+	case 2:
+	{
+		frame_name__ = __config.frame_name;
+		ROS_INFO_STREAM("EnsensoNxNode: Frame ID in cloud message changed to [\x1B[37m" << frame_name__ << "\x1B[0m" << "]");
+		break;
+	}
 	default:
 	{
 		ROS_WARN("Dynamic reconfigure callback ran but no reconfiguration was done");
+		break;
 	}
-	break;
 	}
 
 }
@@ -123,21 +147,24 @@ bool EnsensoNxNode::setCameraEnable(std_srvs::SetBoolRequest& __req, std_srvs::S
 {
 	// if called again, and the camera is already opened, it will destroy/close and reopen again
 	grab_locker__.lock();
-	if( __req.data )
+	if( __req.data && !is_camera_enabled__ )
 	{
 		camera__.reset(new Device(serial_number__));
 		if( camera__ )
 		{
 			camera__->configureCapture(capture_params__);
 			is_camera_enabled__ = true;
+			__res.message = "EnsensoNx is Ready";
 		}
 	}
-	if( !__req.data )
+	else
 	{
 		camera__.reset();
 		is_camera_enabled__ = false;
+		__res.message = "EnsensoNx is closed";
 	}
 	grab_locker__.unlock();
+	__res.success = true;
 	return true;
 }
 
