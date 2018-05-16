@@ -30,7 +30,7 @@ Device::~Device()
 	NxLibCommand close(cmdClose);
 	close.parameters()[itmCameras] = device_params__.serial_num;
 	close.execute();
-	std::cout << "EnsensoNx::Device: Camera closed." << std::endl;
+	std::cout << "EnsensoNx::Device: Camera closed. SN: " << device_params__.serial_num << std::endl;
 	nxLibFinalize();
 }
 
