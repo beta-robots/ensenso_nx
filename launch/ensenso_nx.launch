@@ -1,69 +1,26 @@
 <?xml version="1.0"?>
-
-<!-- Launches ensenso_nx capture node, and visualization according rviz param  -->
-
 <launch>
+	<arg name="gui_tools" default="true" doc="RViz visualization and rqt dynamic reconfigure window"/>
+	<arg name="model_tf" default="true" doc="3D model visualization and tf"/>
+	<arg name="config_file" default="$(find ensenso_nx)/config/ensenso_nx_params.yaml" doc="YAML file with default configuration. These canbe changed dynamically with dynamic_reconfigure"/>
+	<arg name="namespace" default="ensenso_nx" doc="Namespace for topics and params"/>
 
-    <!-- User Args  -->
-    <arg name="rviz" default="true" doc="rviz visualization or not"/>
-    <arg name="model_tf" default="true" doc="3D model visualization and tf"/>
-    <arg name="config_file" default="$(find ensenso_nx)/config/ensenso_nx_params.yaml" doc="YAML file with configutaion parameters"/>
-	<arg name="namespace" default="ensenso_nx" doc="Namespace for topics, frames and params"/>
+	<group if="$(arg model_tf)">
+		<param name="robot_description" command="$(find xacro)/xacro --inorder $(find ensenso_nx)/urdf/single_ensenso_n35.urdf"/>
 
-    <!--Set the namespace-->
-	<group ns="$(arg namespace)">
+		<node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
+			<param name="publish_frequency" value="2" />
+		</node>
 
-		<!--3D model as a robot robot description and tf-->
-	    <group if="$(arg model_tf)">
-
-	        <!-- Load robot description -->
-	        <param
-	            name="robot_description"
-	            command="$(find xacro)/xacro --inorder $(find ensenso_nx)/urdf/single_ensenso_n35.urdf"/>
-
-	        <!-- Run joint state publisher (Gets robot_description from parameter server)-->
-	        <node
-	            pkg="joint_state_publisher"
-	            type="joint_state_publisher"
-	            name="joint_state_publisher" >
-				<param name="publish_frequency" value="2" />
-	        </node>
-
-	        <!-- Run state publisher (Gets robot_description from parameter server)-->
-	        <node
-	            pkg="robot_state_publisher"
-	            type="robot_state_publisher"
-	            name="robot_state_publisher" >
-	            <param name="publish_frequency" value="2"/>
-				<param name="~tf_prefix" value="$(arg namespace)" type="str"/>
-	        </node>
-
-	    </group>
-
-	    <!-- ensenso_nx node parameters-->
-		<rosparam
-			command="load"
-			file="$(arg config_file)"/>
-
-		<!-- ensenso_nx node-->
-	    <node
-	        pkg="ensenso_nx"
-	        type="ensenso_nx"
-	        name="ensenso_nx"
-	        output="screen">
-			<param name="~tf_prefix" value="$(arg namespace)" type="str"/>
-	    </node>
-
+		<param name="publish_frequency" value="2" />
+		<node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
 	</group>
 
-    <!--visualization-->
-    <group if="$(arg rviz)">
-        <node
-            name="rviz"
-            pkg="rviz"
-            type="rviz"
-            args="-d $(find ensenso_nx)/rviz/ensenso_nx.rviz">
-        </node>
-    </group>
+	<rosparam ns="$(arg namespace)" command="load" file="$(arg config_file)"/>
 
+	<node ns="$(arg namespace)" pkg="ensenso_nx" type="ensenso_nx" name="ensenso_nx" output="screen" />
+
+	<group if="$(arg gui_tools)">
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find ensenso_nx)/rviz/ensenso_nx.rviz" />s
+	</group>
 </launch>
