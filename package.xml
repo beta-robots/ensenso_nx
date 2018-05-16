@@ -6,19 +6,14 @@
        Point cloud acquisition from Ensenso Nx cameras. Camera acquisition can be configured as as a publisher or as a service.
     </description>
 
-    <!-- One maintainer tag required, multiple allowed, one person per tag -->
     <maintainer email="andreu@beta-robots.com">Andreu Corominas-Murtra</maintainer>
 
-    <!-- One license tag required, multiple allowed, one license per tag -->
     <license>BSD</license>
 
-    <!-- Url tags are optional, but mutiple are allowed, one per tag -->
     <url type="website">https://github.com/beta-robots/ensenso_nx</url>
 
-    <!-- Author tags are optional, mutiple are allowed, one per tag -->
     <author email="andreu@beta-robots.com">Andreu Corominas-Murtra</author>
 
-    <!-- The *_depend tags are used to specify dependencies: they can be catkin packages or system dependencies -->
     <buildtool_depend>catkin</buildtool_depend>
 
     <build_depend>roscpp</build_depend>
@@ -39,8 +34,6 @@
     <run_depend>pcl_ros</run_depend>
     <run_depend>pcl_conversions</run_depend>
 
-    <!-- The export tag contains other, unspecified, tags -->
     <export>
-        <!-- Other tools can request additional information be placed here -->
     </export>
 </package>

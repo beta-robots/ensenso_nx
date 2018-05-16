@@ -1,26 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 
-# Cmake policy
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0005 NEW)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
-
-# Project name and the type of project
-PROJECT(ensenso_nx)
+project(ensenso_nx)
 message(STATUS "Executig CMakeLists of project  ${PROJECT_NAME}.")
 
 # DEBUG/RELEASE
-IF (NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE "RELEASE")
-ENDIF (NOT CMAKE_BUILD_TYPE)
+if (NOT CMAKE_BUILD_TYPE)
+	set(CMAKE_BUILD_TYPE "RELEASE")
+endif (NOT CMAKE_BUILD_TYPE)
 message(STATUS "Configured to compile in ${CMAKE_BUILD_TYPE} mode.")
 
-#Set Flags
-SET(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -D_REENTRANT")
-SET(CMAKE_CXX_FLAGS_RELEASE "-O3 -D_REENTRANT")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -Wall -D_REENTRANT")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -D_REENTRANT")
 
-#Set compiler according C++11 support
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
@@ -34,7 +25,6 @@ else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-## Find catkin macros and libraries
 find_package(
     catkin REQUIRED
     COMPONENTS
@@ -47,58 +37,64 @@ find_package(
         pcl_conversions
 )
 
-# Find point cloud Library
-FIND_PACKAGE(PCL 1.3 REQUIRED COMPONENTS)
-INCLUDE_DIRECTORIES(${PCL_INCLUDE_DIRS})
-LINK_DIRECTORIES(${PCL_LIBRARY_DIRS})
-ADD_DEFINITIONS(${PCL_DEFINITIONS})
+find_package(PCL 1.3 REQUIRED COMPONENTS)
+include_directories(${PCL_INCLUDE_DIRS})
+link_directories(${PCL_LIBRARY_DIRS})
+add_definitions(${PCL_DEFINITIONS})
 
-
-# Add module path where FindEnsenso.cmake is, and then Set Ensenso library and include paths
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{ENSENSO_INSTALL}/cmake/")
 find_package(Ensenso REQUIRED)
 include_directories(${ENSENSO_INCLUDE_DIRS})
 message(STATUS "Ensenso Headers found at ${ENSENSO_INCLUDE_DIRS}.")
 message(STATUS "Ensenso Libraries found at ${ENSENSO_LIBRARIES}.")
 
-# add other necessary include directories
-include_directories(src/ ${catkin_INCLUDE_DIRS})
-
-# Set source files
-SET(SRCS_LIB
-    src/ensenso_nx.cpp
+include_directories(
+	include
+	${catkin_INCLUDE_DIRS}
 )
 
-SET(SRCS_NODE
-    src/ensenso_nx_node.cpp
-    src/ensenso_nx_node_main.cpp
-)
+generate_dynamic_reconfigure_options(cfg/EnsensoNxParams.cfg)
 
-#dynamic reconfigure cfg file
-generate_dynamic_reconfigure_options(cfg/ensenso_nx_params.cfg)
-
-## The catkin_package macro generates cmake config files for your package
 catkin_package(
-    CATKIN_DEPENDS
-        roscpp
-        rospy
-        dynamic_reconfigure
-        std_msgs
-        sensor_msgs
-        pcl_ros
-        pcl_conversions
+	CATKIN_DEPENDS
+	roscpp
+	rospy
+	dynamic_reconfigure
+	std_msgs
+	sensor_msgs
+	pcl_ros
+	pcl_conversions
 )
 
-#Build library (TODO: Should call a CMakeLists.txt at src/lib/)
-ADD_LIBRARY(${PROJECT_NAME}_LIB SHARED ${SRCS_LIB})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}_LIB
-                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
+add_library(${PROJECT_NAME}_lib SHARED
+	src/${PROJECT_NAME}/ensenso_nx.cpp
+)
+target_link_libraries(${PROJECT_NAME}_lib
+	${ENSENSO_LIBRARIES}
+	${PCL_COMMON_LIBRARIES}
+	${PCL_IO_LIBRARIES}
+)
 
-#Build executable
-ADD_EXECUTABLE(${PROJECT_NAME} ${SRCS_NODE} ${SRCS_LIB})
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
-                      ${ENSENSO_LIBRARIES} ${PCL_COMMON_LIBRARIES} ${PCL_IO_LIBRARIES} ${catkin_LIBRARIES})
-ADD_DEPENDENCIES(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_library(${PROJECT_NAME}_node SHARED
+	src/${PROJECT_NAME}/ensenso_nx_node.cpp
+)
+add_dependencies(${PROJECT_NAME}_node
+	${PROJECT_NAME}_lib
+	${${PROJECT_NAME}_EXPORTED_TARGETS}
+	${PROJECT_NAME}_gencfg
+	${catkin_EXPORTED_TARGETS}
+)
+target_link_libraries(${PROJECT_NAME}_node
+	${PROJECT_NAME}_lib
+	${catkin_LIBRARIES}
+)
 
-#Build examples
-ADD_SUBDIRECTORY(src/examples)
+add_executable(${PROJECT_NAME}
+	src/ensenso_nx_node_main.cpp
+)
+add_dependencies(${PROJECT_NAME}
+	${PROJECT_NAME}_lib
+)
+target_link_libraries(${PROJECT_NAME}
+	${PROJECT_NAME}_node
+)
