@@ -11,39 +11,32 @@ This package works correctly with the following dependencies:
 * CMake + gcc
 * [ROS Kinetic](http://wiki.ros.org/kinetic)
 * [Point Cloud Library v1.7](http://www.pointclouds.org/) (shipped with ROS Kinetic)
-* UEYE driver 4.81.1 (camera interface from manufacturer IDS)
-* Ensenso SDK 1.3.18 and 2.0.140 (propietary library from manufacturer IDS)
-* [Forked version](https://github.com/beta-robots/common_msgs) of ROS sensor_msgs, with definition of SnapshotCloud.srv
+* UEYE driver 4.81.1 and 4.90.5 (camera interface from manufacturer IDS)
+* Ensenso SDK 1.3.18, 2.0.140 and 2.2.65(propietary library from manufacturer IDS, check correspondence with UEYE driver though at [Ensenso Site](https://www.ensenso.com/support/sdk-download/))
+* [Forked version](https://github.com/beta-robots/common_msgs) of ROS sensor_msgs, with definition of `SnapshotCloud.srv`
 
 To install the latest three dependencies of the above list:
 
-1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.81.1_Linux_64.tgz)
+1. Download the UEYE from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file uEye_4.90.5_Linux_64.tgz)
 
 2. Uncompress, move to the folder and run the script (ethernet or usb as needed)
 ```shell
 $ sudo sh ./ueyesdk-setup-4.81.01-eth-amd64.gz.run
 ```
 
-3. Download SDK additional package from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file codemeter_6.40.2402.501_amd64.deb)
+3. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.2.65-x64.deb)
 
-4. Move to the folder where you installed your deb file and then Install it with:
+4. Install it with
 ```shell
-sudo dpkg -i codemeter_6.40.2402.501_amd64.deb
+$ sudo dpkg -i ensenso-sdk-2.2.65-x64.deb
 ```
 
-5. Download the SDK from the [IDS website](http://www.ensenso.com/support/sdk-download/) (file ensenso-sdk-2.0.140-x64.deb)
-
-6. Install it with
-```shell
-$ sudo dpkg -i ensenso-sdk-2.0.140-x64.deb
-```
-
-7. Clone to your ROS workspace /src the forked version of common_msgs
+5. Clone to your ROS workspace /src the forked version of common_msgs
 ```shell
 $ git clone https://github.com/beta-robots/common_msgs.git
 ```
 
-8. Build them with
+6. Build them with
 ```shell
 $ catkin_make --only-pkg-with-deps common_msgs
 ```
@@ -89,6 +82,8 @@ $ roslaunch ensenso_nx ensenso_nx.launch
 $ rosservice call /ensenso_nx/ensenso_server "dense_cloud: false exposure: 0"
 ```
 
+4. Open an rqt window for dynamic reconfigure and change parameters and mode in runtime.
+
 ### Troubleshooting
 - The IDS application nxView shows 3D realtime data, and allows to manage all parameters involved in the stereo computation.
 ```shell
@@ -99,6 +94,7 @@ $ nxView
 ```shell
 $ ueyecameramanager
 ```
+
 
 - In some cases you have to manually edit the file **/usr/local/share/ueye/ueyeethd/ueyeethd.conf** with sudo privileges and set the interface and port. For instance, if you are using eth0 interface, the file should look like:
 ```shell
@@ -117,3 +113,18 @@ $ sudo /etc/init.d/ueyeethdrc stop
 $ sudo /etc/init.d/ueyeethdrc start
 ```
 
+- The firmare of your camera might not correspond with the drivers you download above. In order to be sure you have it, use the camera manager, i.e.
+```shell
+$ ueyecameramanager
+```
+And click the button __Upload starter firmware__.
+
+- Not closing properly the camera might lead to issues in operation, throwing the following exception:
+```
+An NxLib error when executing the command:
+Open:
+UEyeApiException: UEye API error -1(General error message) at </common/uEye/uEyeCamera.cpp:686>.
+```
+The line in the `uEyeCamera.cpp` file might vary depending on the version of the ueye driver you have installed. This issue can be aggravated in high temperatures conditions. The main reason for not closing properly is because the software didn't have enough time to close properly, due to a long ethernet cable or poor cable quality or a heavy loaded network.
+
+If you are using `roslaunch`, you might need to increase the timeout used to escalate to `SIGTERM`. You can find those values [here](https://github.com/ros/ros_comm/blob/melodic-devel/tools/roslaunch/src/roslaunch/nodeprocess.py#L58-L59) for instance. This modification is PC-based as this values are not configurable.
