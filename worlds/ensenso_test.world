@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<sdf version="1.5">
+  <world name="default">
+    <!-- A global light source -->
+    <include>
+      <uri>model://sun</uri>
+    </include>
+    <!-- A ground plane -->
+    <include>
+      <uri>model://ground_plane</uri>
+    </include>
+    <!-- And something to look at -->
+    <include>
+      <name>gripper</name>
+      <uri>model://pr2_gripper</uri>
+      <pose>-0.85 0.2 0.1 0 0 0</pose>
+    </include>
+  </world>
+</sdf>
