@@ -179,7 +179,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 					_p_cloud.points.at(kk).x = std::nan("");
 					_p_cloud.points.at(kk).y = std::nan("");
 					_p_cloud.points.at(kk).z = std::nan("");
-					_p_cloud.points.at(kk).intensity = std::nan("");
+					_p_cloud.points.at(kk).intensity = 0;
 					kk++;
 				}
 				else
@@ -262,9 +262,9 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZRGB> & _p_cloud)
 					_p_cloud.points.at(kk).x = std::nan("");
 					_p_cloud.points.at(kk).y = std::nan("");
 					_p_cloud.points.at(kk).z = std::nan("");
-					_p_cloud.points.at(kk).r = std::nan("");
-					_p_cloud.points.at(kk).g= std::nan("");
-					_p_cloud.points.at(kk).b= std::nan("");
+					_p_cloud.points.at(kk).r = 0;
+					_p_cloud.points.at(kk).g= 0;
+					_p_cloud.points.at(kk).b= 0;
 					kk++;
 				}
 				else
