@@ -146,8 +146,14 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	camera__[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points, 0);
 
 	//Get 2D image raw data
-	camera__[itmImages][itmRaw][0][itmLeft].getBinaryData(&nx_return_code, raw_img, 0);
-
+	if (!flexview_enabled__)
+	{
+		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, raw_img, 0);
+	}
+	else
+	{
+		camera__[itmImages][itmRaw][0][itmLeft].getBinaryData(&nx_return_code, raw_img, 0);
+	}
 	//Move raw data to point cloud
 	_p_cloud.width = (unsigned int)ww;
 	_p_cloud.height = (unsigned int)hh;
@@ -173,6 +179,92 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 					_p_cloud.points.at(kk).x = std::nan("");
 					_p_cloud.points.at(kk).y = std::nan("");
 					_p_cloud.points.at(kk).z = std::nan("");
+					_p_cloud.points.at(kk).intensity = std::nan("");
+					kk++;
+				}
+				else
+				{
+					//nothing to do , the point is lost
+				}
+			}
+		}
+	}
+
+	//resize with number valid points. If _dense_cloud, just set the flag ordered to true
+	_p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
+	_p_cloud.is_dense = capture_params__.dense_cloud;
+
+	//debug message
+	//     std::cout << "Cloud capture: " << std::endl <<
+	//                  "\treturn code: " << nx_return_code << std::endl <<
+	//                  "\tnum points: " << raw_points.size()/3 << std::endl <<
+	//                  "\twidth: " << ww << std::endl <<
+	//                  "\theight: " << hh << std::endl <<
+	//                  "\tvalid_points: " << kk << std::endl;
+
+	//return success
+	return 1;
+}
+
+int Device::capture(pcl::PointCloud<pcl::PointXYZRGB> & _p_cloud)
+{
+
+	int ww, hh;
+	float px;
+	std::vector<float> raw_points;
+	std::vector<int> raw_img;
+	int nx_return_code;
+
+	NxLibCommand (cmdCapture).execute();
+	NxLibCommand (cmdComputeDisparityMap).execute();
+	NxLibCommand (cmdComputePointMap).execute();
+
+	//Get image dimensions
+	camera__[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
+
+	//Get 3D image raw data
+	camera__[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points, 0);
+
+	//Get 2D image raw data
+	if (!flexview_enabled__)
+	{
+		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, raw_img, 0);
+	}
+	else
+	{
+		camera__[itmImages][itmRaw][0][itmLeft].getBinaryData(&nx_return_code, raw_img, 0);
+	}
+
+	//Move raw data to point cloud
+	_p_cloud.width = (unsigned int)ww;
+	_p_cloud.height = (unsigned int)hh;
+	_p_cloud.resize(_p_cloud.width*_p_cloud.height);
+	unsigned int kk = 0;
+	for(unsigned int ii = 0; ii<_p_cloud.height; ii++ )
+	{
+		for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
+		{
+			px = raw_points[(ii*_p_cloud.width + jj)*3];
+			if ( !std::isnan(px) )
+			{
+				_p_cloud.points.at(kk).x = px/1000.;
+				_p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
+				_p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
+				_p_cloud.points.at(kk).r = raw_img[(ii*_p_cloud.width + jj)*3];
+				_p_cloud.points.at(kk).g = raw_img[(ii*_p_cloud.width + jj)*3+1];
+				_p_cloud.points.at(kk).b = raw_img[(ii*_p_cloud.width + jj)*3+2];
+				kk++;
+			}
+			else //in case of nan, check dense_cloud_ to fill in the cloud or not
+			{
+				if (capture_params__.dense_cloud)
+				{
+					_p_cloud.points.at(kk).x = std::nan("");
+					_p_cloud.points.at(kk).y = std::nan("");
+					_p_cloud.points.at(kk).z = std::nan("");
+					_p_cloud.points.at(kk).r = std::nan("");
+					_p_cloud.points.at(kk).g= std::nan("");
+					_p_cloud.points.at(kk).b= std::nan("");
 					kk++;
 				}
 				else
@@ -207,17 +299,16 @@ void Device::configureCapture()
     NxLibItem flexViewNode = camera__[itmParameters][itmCapture][itmFlexView];
     if (flexViewNode.exists())
     {
-
         camera__[itmParameters][itmCapture][itmFlexView] = capture_params__.flex_view;
         if (capture_params__.flex_view < 2)
         {
-
             camera__[itmParameters][itmCapture][itmFlexView] = false;
-
         }
-
+        else
+        {
+            flexview_enabled__ = true;
+        }
     }
-
 }
 
 }

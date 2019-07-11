@@ -49,6 +49,7 @@ protected:
 	CaptureParams capture_params__;
 	bool grabCloud();
 	bool grabCloudGrayScale();
+	bool grabCloudRGB();
 	std::mutex grab_locker__;
 
 	ros::NodeHandle nh__;
@@ -68,6 +69,7 @@ protected:
 	ros::Publisher cloud_publisher__;
 	pcl::PointCloud<pcl::PointXYZ> cloud__;
 	pcl::PointCloud<pcl::PointXYZI> cloud_grayscale__;
+	pcl::PointCloud<pcl::PointXYZRGB> cloud_rgb__;
 
 	bool is_params_loaded__;
 	int run_mode__;

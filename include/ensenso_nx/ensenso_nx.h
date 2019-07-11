@@ -79,6 +79,7 @@ public:
 	**/
 	int capture(pcl::PointCloud<pcl::PointXYZ> & __p_cloud);
 	int capture(pcl::PointCloud<pcl::PointXYZI> & __p_cloud);
+	int capture(pcl::PointCloud<pcl::PointXYZRGB> & __p_cloud);
 
 
 protected:
@@ -87,6 +88,7 @@ protected:
 	 * \param _params: capture parameters
 	**/
 	void configureCapture();
+	bool flexview_enabled__ = false ;
 
 
 };
