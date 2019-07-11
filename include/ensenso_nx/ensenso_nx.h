@@ -9,6 +9,7 @@
 
 #include <nxLib.h>
 
+
 namespace ensenso_nx
 {
 
@@ -26,6 +27,7 @@ struct CaptureParams
 {
 	bool auto_exposure;
 	unsigned int exposure_time; //in milliseconds TODO: check if uint is enough, or needs double
+	int flex_view = 0;
 	bool dense_cloud; //Device::capture() returns a dense (ordered) point cloud if set to true
 
 	void print() const
@@ -76,6 +78,8 @@ public:
 	 * \return 1 if ok, -1 if not. TODO
 	**/
 	int capture(pcl::PointCloud<pcl::PointXYZ> & __p_cloud);
+	int capture(pcl::PointCloud<pcl::PointXYZI> & __p_cloud);
+
 
 protected:
 	/** \brief Hardware set configuration
@@ -83,6 +87,8 @@ protected:
 	 * \param _params: capture parameters
 	**/
 	void configureCapture();
+
+
 };
 
 }

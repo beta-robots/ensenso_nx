@@ -35,6 +35,7 @@ find_package(
         sensor_msgs
         pcl_ros
         pcl_conversions
+	actionlib_msgs
 )
 
 find_package(PCL 1.3 REQUIRED COMPONENTS)
@@ -64,6 +65,7 @@ catkin_package(
 	sensor_msgs
 	pcl_ros
 	pcl_conversions
+	actionlib_msgs
 )
 
 add_library(${PROJECT_NAME}_lib SHARED
