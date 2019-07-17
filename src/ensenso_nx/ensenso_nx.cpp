@@ -239,10 +239,8 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		std::cout << "," << raw_img[i];
 					std::cout << " inside for loop 1 end" << std::endl ;
 
-
-
 	}
-	/*
+/*
 	std::cout << " Raw img" << std::endl ;
 	for (int i = 0; i< raw_img.size();i++)
 		std::cout << " " << raw_img[i];
