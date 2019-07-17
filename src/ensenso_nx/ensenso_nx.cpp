@@ -183,6 +183,8 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	raw_img_r.clear();
 	raw_img_l.clear();
 	int photos_set = capture_params__.flex_view;
+	photos_set = photos_set - (photos_set % 4);
+	std::cout << "photos set: " << photos_set<< std::endl;
 	if (!flexview_enabled__)
 	{
 		photos_set = 1;
@@ -201,8 +203,8 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		for (int i = 0; i < photos_set; i++)
 		{
 
-			camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
-			camera__[itmImages][itmRaw][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
+			camera__[itmImages][itmRaw][i][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
+			camera__[itmImages][itmRaw][i][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
 
 		}
 
@@ -218,17 +220,18 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		int ii = (i-residual)*4;
 		raw_img[i] = 0;
 		std::cout << " pre for loop 2" << std::endl ;
-		for (int j=0; j< 4; j++)
+		for (int j=0; j< photos_set/4; j++)
 		{
 			std::cout << " inside for loop 2 "  << raw_img_l[ii].size() <<"  and   :  " << raw_img_l.size() <<"  and   :  " << ii <<std::endl ;
 			raw_img[i] += raw_img_l[j*4 + residual][ii] + raw_img_r[j*4 + residual][ii];
 			std::cout << " inside for loop 2 end " << j << std::endl ;
-			if (j == 3)
+			if (j == 0)
 			{
+
 				std::cout << " " << raw_img[i];
 				std::cout << "." << static_cast<unsigned int>(raw_img_l[ii][j*4 + residual]);
-			}
 
+			}
 
 		}
 					std::cout << " dividing" << std::endl ;
