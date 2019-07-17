@@ -6,6 +6,7 @@
 
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
+#include <sensor_msgs/Image.h>
 
 #include <nxLib.h>
 
@@ -27,7 +28,7 @@ struct CaptureParams
 {
 	bool auto_exposure;
 	unsigned int exposure_time; //in milliseconds TODO: check if uint is enough, or needs double
-	int flex_view = 0;
+	int flex_view;
 	bool dense_cloud; //Device::capture() returns a dense (ordered) point cloud if set to true
 
 	void print() const

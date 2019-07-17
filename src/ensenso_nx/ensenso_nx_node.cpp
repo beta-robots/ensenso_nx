@@ -27,8 +27,8 @@ EnsensoNxNode::EnsensoNxNode():
 	if( !nh__.getParam("auto_exposure", capture_params__.auto_exposure) )
 		ROS_WARN_NAMED("EnensoNxNode", "auto_exposure is not set, it will be set to false");
 
-	capture_params__.flex_view = false;
-	if( !nh__.getParam("auto_exposure", capture_params__.flex_view) )
+	capture_params__.flex_view = 0;
+	if( !nh__.getParam("flexview", capture_params__.flex_view) )
 		ROS_WARN_NAMED("EnensoNxNode", "flexview is not set, it will be set to false");
 
 	int exposure_time = 0;
@@ -52,6 +52,7 @@ EnsensoNxNode::EnsensoNxNode():
 
 	configure_server__.setCallback( boost::bind(&EnsensoNxNode::reconfigureCallback, this, _1, _2) );
 
+	//ROS_WARN_STREAM("NODE NAME: "<<ros::this_node::getName());
 	snapshot_action__.reset(new actionlib::SimpleActionServer<sensor_msgs::AdvancedSnapshotCloudAction>(ros::NodeHandle(), ros::this_node::getName() + "/advanced_snapshot/", boost::bind(&EnsensoNxNode::advancedSnapshotCallback, this, _1), false));
 	snapshot_action__->start();
 
@@ -207,8 +208,11 @@ bool EnsensoNxNode::grabCloudGrayScale()
 		return false;
 	}
 
+	std::cout <<"inside grab grayscale capturing" << std::endl;
+
 	int good_result = 1;
 	int result = camera__->capture(cloud_grayscale__);
+		std::cout <<"captured" << std::endl;
 	if ( result == good_result )
 	{
 		ros::Time ts = ros::Time::now();
@@ -301,8 +305,10 @@ void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshot
 
 	sensor_msgs::AdvancedSnapshotCloudResult res;
 	capture_params__.dense_cloud = __goal->dense_cloud;
+	std::cout << "ensenso_nx: Call recieved!  dense? " << capture_params__.dense_cloud << std::endl;
 
 	if (__goal->raw_data == sensor_msgs::AdvancedSnapshotCloudGoal::GRAYSCALE){
+		std::cout << "ensenso_nx: grayscale type called! "<< std::endl;
 		cloud_grayscale__.clear();
 		grab_locker__.lock();
 		bool result = grabCloudGrayScale();
@@ -326,10 +332,19 @@ void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshot
 				cloud_rgb.points[i].g = static_cast<uint8_t>(cloud_grayscale__.points[i].intensity);
 				cloud_rgb.points[i].b = static_cast<uint8_t>(cloud_grayscale__.points[i].intensity);
 			}
+			pcl::PointCloud<pcl::PointXYZ> cloud;
+			pcl::copyPointCloud<pcl::PointXYZRGB,pcl::PointXYZ>(cloud_rgb,cloud);
 
-			pcl::toROSMsg(cloud_rgb, res.cloud);
+			pcl::toROSMsg(cloud, res.cloud);
 			pcl::toROSMsg(cloud_rgb, res.image);
+
+			for (int i = 500; i< 1300;i++)
+				std::cout << " " << cloud_rgb.points[i].x;
+			std::cout << std::endl;
+			std::cout << "ensenso_nx: Returning result! size_cloud:  "<< res.cloud.data.size() << std::endl;
+			std::cout << "ensenso_nx: Returning result! size_image:  "<< res.image.data.size() << std::endl;
 			snapshot_action__->setSucceeded(res);
+			std::cout << "result sended  " << std::endl;
 		}
 		else
 		{
