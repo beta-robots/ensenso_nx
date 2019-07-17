@@ -229,7 +229,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 			{
 
 				std::cout << " " << raw_img[i];
-				std::cout << "." << static_cast<unsigned int>(raw_img_l[ii][j*4 + residual]);
+				std::cout << "." << static_cast<unsigned int>(raw_img_l[j*4 + residual][ii]);
 
 			}
 
