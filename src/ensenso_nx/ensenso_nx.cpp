@@ -222,7 +222,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		std::cout << " pre for loop 2" << std::endl ;
 		for (int j=0; j< photos_set/4; j++)
 		{
-			std::cout << " inside for loop 2 "  << raw_img_l[ii].size() <<"  and   :  " << raw_img_l.size() <<"  and   :  " << ii <<std::endl ;
+			std::cout << " inside for loop 2 "  << raw_img_l[j*4 + residual].size() <<"  and   :  " << raw_img_l.size() <<"  and   :  " << ii <<std::endl ;
 			raw_img[i] += raw_img_l[j*4 + residual][ii] + raw_img_r[j*4 + residual][ii];
 			std::cout << " inside for loop 2 end " << j << std::endl ;
 			if (j == 0)
