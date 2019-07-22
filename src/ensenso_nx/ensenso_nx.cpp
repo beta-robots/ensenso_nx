@@ -75,14 +75,19 @@ void Device::configureCapture(const CaptureParams & __params)
 
 int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 {
+
+  std::cout << "Inside capture xiz" << std::endl;
 	int ww, hh;
 	float px;
 	std::vector<float> raw_points;
 	int nx_return_code;
 
+  std::cout << "Executing" << std::endl;
 	NxLibCommand (cmdCapture).execute();
 	NxLibCommand (cmdComputeDisparityMap).execute();
 	NxLibCommand (cmdComputePointMap).execute();
+  std::cout << "Executed" << std::endl;
+
 
 	// Get image dimensions
 	camera__[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
@@ -143,7 +148,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 {
 
-	int ww, hh;
+	int ww, hh,www,hhh;
 	float px;
 	std::vector<float> raw_points;
 	std::vector<float> raw_img;
@@ -157,7 +162,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	{
 
 		NxLibCommand cam(cmdCapture);
-		cam.parameters()[itmTimeout] = 25000;
+    cam.parameters()[itmTimeout] = 25000;
 		cam.execute();
 
 
@@ -184,62 +189,66 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	raw_img_l.clear();
 	int photos_set = capture_params__.flex_view;
 	photos_set = photos_set - (photos_set % 4);
-	std::cout << "photos set: " << photos_set<< std::endl;
 	if (!flexview_enabled__)
 	{
 		photos_set = 1;
-		std::cout << "flexview not enabled" << std::endl;
 		raw_img_r.resize(1);
 		raw_img_l.resize(1);
-		camera__[itmImages][itmRaw][itmLeft].getBinaryData(raw_img_l[0], 0);
-		camera__[itmImages][itmRaw][itmRight].getBinaryData(raw_img_r[0], 0);
+		camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+		camera__[itmImages][itmRectified][itmLeft].getBinaryData(raw_img_l[0], 0);
+		camera__[itmImages][itmRectified][itmRight].getBinaryData(raw_img_r[0], 0);
 	}
 	else
 	{
-
-		std::cout << "flexview enabled" << std::endl;
+		camera__[itmImages][itmRectified][0][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
 		raw_img_r.resize(photos_set);
 		raw_img_l.resize(photos_set);
 		for (int i = 0; i < photos_set; i++)
 		{
 
-			camera__[itmImages][itmRaw][i][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
-			camera__[itmImages][itmRaw][i][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
+			camera__[itmImages][itmRectified][i][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
+			camera__[itmImages][itmRectified][i][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
 
 		}
 
 	}
-	std::cout << " Raw img" << std::endl ;
+	std::cout << "width 3d: " << ww << "	2d: " << www << std::endl;
+	std::cout << "height 3d: " << hh << "	2d: " << hhh << std::endl;
+	std::cout << "raw img size: " << raw_img_l[0].size() << std::endl;
+	std::cout << "raw point size: " << raw_points.size() << std::endl;
 	raw_img.resize((unsigned int)ww*(unsigned int)hh);
-	std::cout << " pre for loop" << std::endl ;
-	for (int i = 0; i < raw_img.size(); i++)
+
+	/*for (int i = 0; i < raw_img.size(); i++)
 	{
-		std::cout << " inside for loop" << std::endl ;
 
 		int residual = i % 4;
-		int ii = (i-residual)*4;
+		int ii = (i-residual);
 		raw_img[i] = 0;
-		std::cout << " pre for loop 2" << std::endl ;
 		for (int j=0; j< photos_set/4; j++)
 		{
-			std::cout << " inside for loop 2 "  << raw_img_l[j*4 + residual].size() <<"  and   :  " << raw_img_l.size() <<"  and   :  " << ii <<std::endl ;
-			raw_img[i] += raw_img_l[j*4 + residual][ii] + raw_img_r[j*4 + residual][ii];
-			std::cout << " inside for loop 2 end " << j << std::endl ;
-			if (j == 0)
-			{
-
-				std::cout << " " << raw_img[i];
-				std::cout << "." << static_cast<unsigned int>(raw_img_l[j*4 + residual][ii]);
-
-			}
-
+			//raw_img[i] += raw_img_l[j*4 + residual][ii] + raw_img_r[j*4 + residual][ii];
 		}
-					std::cout << " dividing" << std::endl ;
-		raw_img[i] = raw_img[i]/8.0f;
-		std::cout << "," << raw_img[i];
-					std::cout << " inside for loop 1 end" << std::endl ;
+
+		//raw_img[i] = raw_img[i]/(2.0f);
+
+
+	}*/
+
+	for (int i = 0; i < raw_img.size(); i++)
+	{
+
+		for (int j = 0; j < raw_img_l.size(); j++)
+		{
+
+			raw_img[i] = raw_img[i] + (raw_img_l[j][i] /*+ raw_img_r[j][i]*/)/*/2*/;
+
+
+    }
+		raw_img[i] = raw_img[i]/raw_img_l.size();
 
 	}
+
+
 /*
 	std::cout << " Raw img" << std::endl ;
 	for (int i = 0; i< raw_img.size();i++)
@@ -283,8 +292,22 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 			}
 		}
 	}
-		std::cout << "outside" << std::endl;
 
+	/*std::cout << "Distances!" << std::endl;
+	for (int i =0 ;i <_p_cloud.points.size();i++)
+	{
+
+		if (i > 10 )
+		{
+
+			float module = sqrt(pow(_p_cloud.points.at(i).x - _p_cloud.points.at(i-1).x,2) + pow(_p_cloud.points.at(i).y - _p_cloud.points.at(i-1).y,2)+pow(_p_cloud.points.at(i).z-_p_cloud.points.at(i-1).z,2));
+			std::cout << " " << module;
+		}
+
+
+	}
+	std::cout <<  std::endl;
+	*/
 
 	//resize with number valid points. If _dense_cloud, just set the flag ordered to true
 	_p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
@@ -397,7 +420,7 @@ void Device::configureCapture()
 	camera__[itmParameters][itmCapture][itmAutoExposure] = capture_params__.auto_exposure;
 	camera__[itmParameters][itmCapture][itmExposure    ] = static_cast<double>(capture_params__.exposure_time); //TODO check if requires cast to double.
 
-	camera__[itmParameters][itmCapture][itmTriggerDelay] = 8000.0f;
+/*	camera__[itmParameters][itmCapture][itmTriggerDelay] = 8000.0f;
 	if (capture_params__.flex_view < 2)
 	{
 
@@ -414,7 +437,7 @@ void Device::configureCapture()
 		std::cout << "FLEXVIEW ENABLED" << std::endl;
 
 	}
-
+*/
 }
 
 }
