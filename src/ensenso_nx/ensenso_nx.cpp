@@ -145,6 +145,8 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 	return 1;
 }
 
+
+
 int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 {
 
@@ -206,17 +208,21 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		for (int i = 0; i < photos_set; i++)
 		{
 
-			camera__[itmImages][itmRectified][i][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
-			camera__[itmImages][itmRectified][i][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
+      camera__[itmImages][itmRectified][i][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
+      camera__[itmImages][itmRectified][i][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
 
 		}
 
 	}
 	std::cout << "width 3d: " << ww << "	2d: " << www << std::endl;
 	std::cout << "height 3d: " << hh << "	2d: " << hhh << std::endl;
-	std::cout << "raw img size: " << raw_img_l[0].size() << std::endl;
-	std::cout << "raw point size: " << raw_points.size() << std::endl;
+   std::cout << "raw img size: " << raw_img.size() << std::endl;
+  std::cout << "raw img size1: " << raw_img_l.size() << std::endl;
+  std::cout << "raw img size2: " << raw_img_l[0].size() << std::endl;
+  std::cout << "raw point size: " << raw_points.size() << std::endl;
 	raw_img.resize((unsigned int)ww*(unsigned int)hh);
+
+
 
 	/*for (int i = 0; i < raw_img.size(); i++)
 	{
@@ -234,24 +240,47 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 
 	}*/
 
-	for (int i = 0; i < raw_img.size(); i++)
-	{
+  for (int i = 0; i < raw_img.size(); i++)
+  {
+raw_img[i] = 0;
 
-		for (int j = 0; j < raw_img_l.size(); j++)
+    for (int j = 0; j < raw_img_l.size(); j++)
 		{
 
-			raw_img[i] = raw_img[i] + (raw_img_l[j][i] /*+ raw_img_r[j][i]*/)/*/2*/;
+
+
+        raw_img[i] = raw_img[i]  + raw_img_l[j][i];
+
+        //raw_img[i] = raw_img[i]  + (raw_img_l[j][i] + raw_img_r[j][i])/2;
+
 
 
     }
-		raw_img[i] = raw_img[i]/raw_img_l.size();
+    raw_img[i] = raw_img[i]/raw_img_l.size();
 
-	}
-
+  }
+//std::vector<std::vector<float>> kernel = {{0.0f,0.0f,2.0f,0.0f,0.0f},{0.0f,3.0f,4.0f,3.0f,0.0f},{2.0f,4.0f,0.0f,4.0f,2.0f},{0.0f,3.0f,4.0f,3.0f,0.0f},{0.0f,0.0f,2.0f,0.0f,0.0f}};
+  //std::vector<std::vector<float>> kernel = {{0.0f,0.0f,2.0f,0.0f,0.0f},{0.0f,3.0f,5.0f,3.0f,0.0f},{2.0f,5.0f,10.0f,5.0f,2.0f},{0.0f,3.0f,5.0f,3.0f,0.0f},{0.0f,0.0f,2.0f,0.0f,0.0f}};
+  std::vector<std::vector<float>> kernel_sharpen0 = {{0.0f,-1.0f,0.0f},{-1.0f,5.0f,-1.0f},{0.0f,-1.0f,0.0f}};//sharpen
+  std::vector<std::vector<float>> kernel_sharpen = {{-1.0f,-1.0f,-1.0f},{-1.0f,9.0f,-1.0f},{-1.0f,-1.0f,-1.0f}};//sharpen
+  std::vector<std::vector<float>> kernel_sharpen2 = {{-2.0f,-2.0f,-2.0f},{-2.0f,18.0f,-2.0f},{-2.0f,-2.0f,-2.0f}};//sharpen
+  std::vector<std::vector<float>> kernel_sharpen3 = {{0.0f,0.0f,-1.0f,0.0f,0.0f},{0.0f,-1.0f,-2.0f,-1.0f,0.0f},{-1.0f,-2.0f,17.0f,-2.0f,-1.0f},{0.0f,-1.0f,-2.0f,-1.0f,0.0f},{0.0f,0.0f,-1.0f,0.0f,0.0f}};//sharpen
+  std::vector<std::vector<float>> kernel_blur = {{1.0f/16.0f,1.0f/16.0f,1.0f/16.0f},{1.0f/16.0f,1.0f/2.0f,1.0f/16.0f},{1.0f/16.0f,1.0f/16.0f,1.0f/16.0f}};//common blur
+  std::vector<std::vector<float>> kernel_outline = {{-1.0f,-1.0f,-1.0f},{-1.0f,8.0f,-1.0f},{-1.0f,-1.0f,-1.0f}};//outline
+  std::vector<std::vector<float>> kernel_hzline= {{-1.0f/6.0f,-1.0f/6.0f,-1.0f/6.0f},{1.0f/3.0f,1.0f/3.0f,1.0f/3.0f},{-1.0f/6.0f,-1.0f/6.0f,-1.0f/6.0f}};// hline
+  std::vector<std::vector<float>> kernel_vline_fill = {{1.0f/7.0f,0.0f,1.0f/7.0f},{1.0f/7.0f,1.0f/7.0f,1.0f/7.0f},{1.0f/7.0f,1.0f/7.0f,1.0f/7.0f}};//outline
+  //std::vector<std::vector<float>> kernel = {{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f}};
+//for (int k = 0; k < 3; k++)
+//    convolutionalFiltering(raw_img,ww,hh,kernel_blur);
+  convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
+//convolutionalFiltering(raw_img,ww,hh,kernel_hzline);
+//    convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
+//convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
 
 /*
+
 	std::cout << " Raw img" << std::endl ;
-	for (int i = 0; i< raw_img.size();i++)
+  for (int i = 500; i< 900; i++)
 		std::cout << " " << raw_img[i];
 	std::cout << std::endl ;
 */
@@ -260,7 +289,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	_p_cloud.height = (unsigned int)hh;
 	_p_cloud.resize(_p_cloud.width*_p_cloud.height);
 	unsigned int kk = 0;
-	std::cout << "entering for. raw_img size: "<< raw_img_l[1].size() <<"	points size: " << raw_points.size() << "h*w" << _p_cloud.width*_p_cloud.height << std::endl;
+//	std::cout << "entering for. raw_img size: "<< raw_img_l[1].size() <<"	points size: " << raw_points.size() << "h*w" << _p_cloud.width*_p_cloud.height << std::endl;
 	for(unsigned int ii = 0; ii<_p_cloud.height; ii++ )
 	{
 		for(unsigned int jj = 0; jj<_p_cloud.width; jj++ )
@@ -271,7 +300,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 				_p_cloud.points.at(kk).x = px/1000.;
 				_p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
 				_p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
-				_p_cloud.points.at(kk).intensity = raw_img[kk];
+        _p_cloud.points.at(kk).intensity = raw_img[(ii*_p_cloud.width + jj)];//raw_img[kk];
 				kk++;
 			}
 			else //in case of nan, check dense_cloud_ to fill in the cloud or not
@@ -420,7 +449,7 @@ void Device::configureCapture()
 	camera__[itmParameters][itmCapture][itmAutoExposure] = capture_params__.auto_exposure;
 	camera__[itmParameters][itmCapture][itmExposure    ] = static_cast<double>(capture_params__.exposure_time); //TODO check if requires cast to double.
 
-/*	camera__[itmParameters][itmCapture][itmTriggerDelay] = 8000.0f;
+
 	if (capture_params__.flex_view < 2)
 	{
 
@@ -436,8 +465,127 @@ void Device::configureCapture()
 		camera__[itmParameters][itmCapture][itmFlexView] = static_cast<int>(capture_params__.flex_view);
 		std::cout << "FLEXVIEW ENABLED" << std::endl;
 
-	}
-*/
+  }
+
+
+  if (capture_params__.flex_view > 8)
+      camera__[itmParameters][itmDisparityMap][itmStereoMatching][itmMethod] = "Correlation";
+
+
+
+
+
 }
+
+void Device::convolutionalFiltering(std::vector<float>& __2d_image,const int __width,const int __height,const std::vector<std::vector<float>> __kernel,int iter_n)
+{
+
+
+
+    std::vector<float> _2d_image_copy = __2d_image;
+
+    if (__kernel.size()%2 == 0)
+    {
+      std::cerr << "Error filtering the 2d data! kernel width must have a impar number to respect the simmetry!" << std::endl;
+      return;
+    }
+
+    if (__kernel.size()%2 == 0)
+    {
+      std::cerr << "Error filtering the 2d data! kernel width must have a impar number to respect the simmetry!" << std::endl;
+      return;
+    }
+
+
+
+    int kernel_w = (__kernel.size()-1)/2;
+    int kernel_h = (__kernel[0].size()-1)/2;
+
+    //Normalising kernel
+    /*
+    int module_val = 0;
+    for (size_t i = 0; i< __kernel.size(); i++)
+    {
+      for (size_t j = 0; j< __kernel[0].size(); j++)
+      {
+      module_val += abs(__kernel[i][j]);
+      }
+    }
+
+  std::vector<std::vector<float>> normalised_kernel = __kernel;
+    for (size_t i = 0; i< __kernel.size(); i++)
+    {
+      for (size_t j = 0; j< __kernel[0].size(); j++)
+      {
+      normalised_kernel[i][j] = __kernel[i][j]/module_val;
+      }
+    }
+    */
+    std::vector<std::vector<float>> normalised_kernel = __kernel;
+
+
+
+    std::cout << "wwww: " << __width << std::endl;
+    std::cout << "hhh" << __height << std::endl;
+    std::cout << "max " << __width*__height << std::endl;
+
+    for (size_t j = 0; j< __height; j++)
+    {
+      for (size_t i = 0; i< __width; i++)
+      {
+
+
+
+        //Conditions to allow the filtering of a pixel
+        bool condition_1 = (i - kernel_w)>= 0;
+        bool condition_2 = (i + kernel_w)<= __width;
+        bool condition_3 = (j - kernel_h)>= 0;
+        bool condition_4 = (j + kernel_h)< __height;
+
+        if (condition_1 && condition_2 && condition_3 && condition_4)
+        {
+
+          //Its okay! lets filter the pixel!
+          __2d_image[i + j*__width] = 0.0f;
+          for (int ii = i - kernel_w; ii<=  i + kernel_w; ii++)
+          {
+
+            for (int jj = j - kernel_h; jj<=  j + kernel_h; jj++)
+            {
+
+              __2d_image[i + j*__width] += _2d_image_copy[ii + jj*__width]*normalised_kernel[ii-(i - kernel_w)][jj-(j - kernel_h)];
+
+              if (i == 8 && j == 8)
+              {
+
+                std::cout << "i: " << i << std::endl;
+                std::cout << "j: " << j << std::endl;
+                std::cout << "ii: " << ii << std::endl;
+                std::cout << "jj: " << jj << std::endl;
+                std::cout << "ii k: " << (ii-(i - kernel_w)) << std::endl;
+                std::cout << "jj k: " << (jj-(j - kernel_h)) << std::endl;
+                std::cout << "kernel val: " << normalised_kernel[ii-(i - kernel_w)][jj-(j - kernel_h)] << std::endl;
+                std::cout << "pre val: " << _2d_image_copy[i + j*__width] << std::endl;
+                std::cout << "post val : " << __2d_image[i + j*__width] << std::endl;
+                std::cout <<  std::endl;
+                std::cout <<  std::endl;
+
+              }
+
+            }
+
+          }
+
+        }
+
+      }
+
+    }
+
+
+
+
+}
+
 
 }

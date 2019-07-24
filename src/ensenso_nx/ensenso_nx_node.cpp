@@ -26,11 +26,11 @@ EnsensoNxNode::EnsensoNxNode():
 	capture_params__.auto_exposure = false;
 	if( !nh__.getParam("auto_exposure", capture_params__.auto_exposure) )
 		ROS_WARN_NAMED("EnensoNxNode", "auto_exposure is not set, it will be set to false");
-/*
+
 	capture_params__.flex_view = 0;
 	if( !nh__.getParam("flexview", capture_params__.flex_view) )
 		ROS_WARN_NAMED("EnensoNxNode", "flexview is not set, it will be set to false");
-*/
+
 	int exposure_time = 0;
 	if( !nh__.getParam("exposure_time", exposure_time) )
 		ROS_WARN_NAMED("EnensoNxNode", "exposure_time is not set, it will be set to 0 (zero)");
