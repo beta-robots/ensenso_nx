@@ -83,7 +83,10 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 	int nx_return_code;
 
   std::cout << "Executing" << std::endl;
-	NxLibCommand (cmdCapture).execute();
+
+  NxLibCommand cam(cmdCapture);
+  cam.parameters()[itmTimeout] = 25000;
+  cam.execute();
 	NxLibCommand (cmdComputeDisparityMap).execute();
 	NxLibCommand (cmdComputePointMap).execute();
   std::cout << "Executed" << std::endl;
@@ -218,7 +221,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	std::cout << "height 3d: " << hh << "	2d: " << hhh << std::endl;
    std::cout << "raw img size: " << raw_img.size() << std::endl;
   std::cout << "raw img size1: " << raw_img_l.size() << std::endl;
-  std::cout << "raw img size2: " << raw_img_l[0].size() << std::endl;
+
   std::cout << "raw point size: " << raw_points.size() << std::endl;
 	raw_img.resize((unsigned int)ww*(unsigned int)hh);
 
@@ -272,7 +275,7 @@ raw_img[i] = 0;
   //std::vector<std::vector<float>> kernel = {{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f}};
 //for (int k = 0; k < 3; k++)
 //    convolutionalFiltering(raw_img,ww,hh,kernel_blur);
-  convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
+//  convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
 //convolutionalFiltering(raw_img,ww,hh,kernel_hzline);
 //    convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
 //convolutionalFiltering(raw_img,ww,hh,kernel_sharpen);
@@ -463,6 +466,8 @@ void Device::configureCapture()
 
 		flexview_enabled__ = true;
 		camera__[itmParameters][itmCapture][itmFlexView] = static_cast<int>(capture_params__.flex_view);
+    //camera__[itmParameters][itmCapture][itmHdr] = true;
+    //camera__[itmParameters][itmCapture][itmGainBoost] = true;
 		std::cout << "FLEXVIEW ENABLED" << std::endl;
 
   }
