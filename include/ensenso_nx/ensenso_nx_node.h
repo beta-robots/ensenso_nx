@@ -15,6 +15,10 @@
 #include <ensenso_nx/EnsensoNxParamsConfig.h>
 #include <ensenso_nx/ensenso_nx.h>
 
+#include <sensor_msgs/AdvancedSnapshotCloudAction.h>
+#include <actionlib/server/simple_action_server.h>
+
+
 
 namespace ensenso_nx
 {
@@ -44,6 +48,8 @@ protected:
 	std::shared_ptr<Device> camera__;
 	CaptureParams capture_params__;
 	bool grabCloud();
+	bool grabCloudGrayScale();
+	bool grabCloudRGB();
 	std::mutex grab_locker__;
 
 	ros::NodeHandle nh__;
@@ -62,12 +68,18 @@ protected:
 
 	ros::Publisher cloud_publisher__;
 	pcl::PointCloud<pcl::PointXYZ> cloud__;
+	pcl::PointCloud<pcl::PointXYZI> cloud_grayscale__;
+	pcl::PointCloud<pcl::PointXYZRGB> cloud_rgb__;
 
 	bool is_params_loaded__;
 	int run_mode__;
 	double rate__;
 	std::string frame_name__;
 	std::string serial_number__;
+
+	std::shared_ptr<actionlib::SimpleActionServer<sensor_msgs::AdvancedSnapshotCloudAction> > snapshot_action__;
+
+	void advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshotCloudGoalConstPtr &goal );
 };
 
 }

@@ -6,8 +6,10 @@
 
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
+#include <sensor_msgs/Image.h>
 
 #include <nxLib.h>
+
 
 namespace ensenso_nx
 {
@@ -26,6 +28,7 @@ struct CaptureParams
 {
 	bool auto_exposure;
 	unsigned int exposure_time; //in milliseconds TODO: check if uint is enough, or needs double
+	int flex_view;
 	bool dense_cloud; //Device::capture() returns a dense (ordered) point cloud if set to true
 
 	void print() const
@@ -64,6 +67,9 @@ public:
 	**/
 	void configureCapture(const CaptureParams & __params);
 
+  void convolutionalFiltering(std::vector<float>& __2d_image,const int __width,const int __height,const std::vector<std::vector<float>> __kernel, int iter_n = 1);
+
+
 	/** \brief Set exposure in microseconds
 	 * Set exposure in microseconds
 	 * \param _exposure: exposure in milliseconds, a value of 0 indicates autoexposure
@@ -76,6 +82,9 @@ public:
 	 * \return 1 if ok, -1 if not. TODO
 	**/
 	int capture(pcl::PointCloud<pcl::PointXYZ> & __p_cloud);
+	int capture(pcl::PointCloud<pcl::PointXYZI> & __p_cloud);
+	int capture(pcl::PointCloud<pcl::PointXYZRGB> & __p_cloud);
+
 
 protected:
 	/** \brief Hardware set configuration
@@ -83,6 +92,9 @@ protected:
 	 * \param _params: capture parameters
 	**/
 	void configureCapture();
+	bool flexview_enabled__ = false ;
+
+
 };
 
 }
