@@ -9,6 +9,9 @@ run_mode: 0
 #loop rate in hz (good values: 10 when SERVER, below 1 when PUBLISHER)
 rate: 0.05
 
+#Flexview capability. from 0 to 16 in n35 (0 and 1 means disabled)
+flexview: 16
+
 #frame name to which point cloud is referenced (relative, without namespace)
 frame_name: "single_ensenso_n35_body"
 
