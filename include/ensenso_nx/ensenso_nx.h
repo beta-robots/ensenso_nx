@@ -67,9 +67,6 @@ public:
 	**/
 	void configureCapture(const CaptureParams & __params);
 
-  void convolutionalFiltering(std::vector<float>& __2d_image,const int __width,const int __height,const std::vector<std::vector<float>> __kernel, int iter_n = 1);
-
-
 	/** \brief Set exposure in microseconds
 	 * Set exposure in microseconds
 	 * \param _exposure: exposure in milliseconds, a value of 0 indicates autoexposure
