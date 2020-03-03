@@ -54,11 +54,27 @@ include_directories(
 	${catkin_INCLUDE_DIRS}
 )
 
+
+
 generate_dynamic_reconfigure_options(cfg/EnsensoNxParams.cfg)
+
+
+add_action_files(
+  DIRECTORY action
+  FILES
+  HECalibration.action
+)
+
+generate_messages(
+  DEPENDENCIES actionlib_msgs std_msgs geometry_msgs
+)
+
 
 catkin_package(
 	CATKIN_DEPENDS
 	roscpp
+        tf2
+        tf2_ros
 	rospy
 	dynamic_reconfigure
 	std_msgs
@@ -67,6 +83,9 @@ catkin_package(
 	pcl_conversions
 	actionlib_msgs
 )
+
+
+
 
 add_library(${PROJECT_NAME}_lib SHARED
 	src/${PROJECT_NAME}/ensenso_nx.cpp
@@ -85,6 +104,7 @@ add_dependencies(${PROJECT_NAME}_node
 	${${PROJECT_NAME}_EXPORTED_TARGETS}
 	${PROJECT_NAME}_gencfg
 	${catkin_EXPORTED_TARGETS}
+        ${PROJECT_NAME}_generate_messages_cpp
 )
 target_link_libraries(${PROJECT_NAME}_node
 	${PROJECT_NAME}_lib
@@ -96,6 +116,7 @@ add_executable(${PROJECT_NAME}
 )
 add_dependencies(${PROJECT_NAME}
 	${PROJECT_NAME}_lib
+        ${PROJECT_NAME}_generate_messages_cpp
 )
 target_link_libraries(${PROJECT_NAME}
 	${PROJECT_NAME}_node

@@ -17,7 +17,8 @@ void ensensoExceptionHandling (const NxLibException &ex,
 	}
 }
 
-Device::Device(const std::string & __serial_num)
+Device::Device(const std::string & __serial_num):
+	free_mode__("motion_server/free_mode", true)
 {
 	std::cout << "EnsensoNx::Device: Opening camera ..." << std::endl;
 
@@ -31,10 +32,12 @@ Device::Device(const std::string & __serial_num)
 		return;
 	}
 	device_params__.serial_num = camera__[itmSerialNumber].asString();
+	//tf_listener_ptr__.reset(new tf2_ros::TransformListener(tf2_buffer__));
 
 	NxLibCommand open(cmdOpen);
 	open.parameters()[itmCameras] = device_params__.serial_num;
 	open.execute();
+	free_mode__.waitForServer();
 	std::cout << "EnsensoNx::Device: Camera open. SN: " << device_params__.serial_num << std::endl;
 }
 
@@ -55,6 +58,13 @@ void Device::configureCapture(const CaptureParams & __params)
 	capture_params__.dense_cloud = __params.dense_cloud;
 	capture_params__.flex_view = __params.flex_view;
 	configureCapture();
+}
+
+void Device::configureHECal(const HECalParams & __params)
+{
+	he_cal_params__.decode_data = __params.decode_data;
+	he_cal_params__.grid_spacing = __params.grid_spacing;
+
 }
 
 // void Device::configureExposure(unsigned int _exposure)
@@ -197,11 +207,11 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	}
 	raw_img.resize((unsigned int)ww*(unsigned int)hh);
 
-	for (int i = 0; i < raw_img.size(); i++)
+	for (size_t i = 0; i < raw_img.size(); i++)
 	{
 		raw_img[i] = 0;
 
-		for (int j = 0; j < raw_img_l.size(); j++)
+		for (size_t j = 0; j < raw_img_l.size(); j++)
 		{
 
 				raw_img[i] = raw_img[i]  + raw_img_l[j][i];
@@ -382,6 +392,122 @@ void Device::configureCapture()
 
 	if (capture_params__.flex_view > 8)
 			camera__[itmParameters][itmDisparityMap][itmStereoMatching][itmMethod] = "Correlation";
+
+
+}
+
+
+
+int Device::HandsEyeCalibration(const ensenso_nx::HECalibrationGoalConstPtr &__goal, const ensenso_nx::HECalibrationResultConstPtr &__result)
+{
+
+	//MISSING CHECK IF A PATTERN IS OBTAINED OR NOT. IN CASE IT IS NOT OBTAINED, REPEAT.
+
+	// will need to adapt this line to the size of the calibration pattern that you are using.
+	// Discard any pattern observations that might already be in the pattern buffer.
+	NxLibCommand(cmdDiscardPatterns).execute();
+	NxLibCommand decode(cmdCollectPattern);
+	motion_server::FreeModeGoal goal_free_mode;
+	goal_free_mode.until_button_pressed.data = true;
+	int nx_return_code;
+	double timestamp;
+	if (!he_cal_params__.decode_data)
+	{
+			camera__[itmParameters][itmPattern][itmGridSpacing] = he_cal_params__.grid_spacing;
+	}
+	else
+	{
+			decode.parameters()[itmDecodeData] = true;
+			decode.execute();
+	}
+
+
+
+	// Turn off the camera's projector so that we can observe the calibration pattern.
+	camera__[itmParameters][itmCapture][itmProjector] = false;
+	camera__[itmParameters][itmCapture][itmFrontLight] = true;
+
+	// You can adapt this number depending on how accurate you need the
+	// calibration to be.
+	for (int i = 0; i < __goal->position_number; i++) {
+			// Move your robot to a new position from which the pattern can be seen. It might be a good idea to
+			free_mode__.sendGoal(goal_free_mode);
+			std::cout << "Waiting to confirm new position" << std::endl;
+			free_mode__.waitForResult();
+			std::cout << "New position have been declared" << std::endl;
+
+			//Make sure that the robot is not moving anymore. You might want to wait for a few seconds to avoid
+			//any oscillations.
+			sleep(2);
+
+			// Observe the calibration pattern and store the observation in the pattern buffer.
+			NxLibCommand capture(cmdCapture);
+			capture.parameters()[itmCameras] = device_params__.serial_num;
+			capture.execute();
+			bool foundPattern = false;
+			try {
+				std::vector<std::vector<float>> matrix_t;
+					NxLibCommand collectPattern(cmdCollectPattern);
+					collectPattern.parameters()[itmCameras] = device_params__.serial_num;
+					collectPattern.execute();
+
+					collectPattern.result()[itmStereo][itmLeft][itmTransformation].getBinaryData(&nx_return_code,matrix_t,&timestamp);
+
+					std::cout << "Matrix: " << std::endl;
+					for (size_t i = 0; i< matrix_t.size(); i++)
+					{
+						for (size_t j = 0; j< matrix_t[i].size(); j++)
+						{
+							std::cout << matrix_t[i][j] << " ";
+						}
+						std::cout << std::endl;
+					}
+					foundPattern = true;
+			} catch (NxLibException&) {}
+
+			if (foundPattern) {
+					// We actually found a pattern. Get the current pose of your robot (from which the pattern was
+					// observed) and store it somewhere.
+					geometry_msgs::TransformStamped table_to_ensenso = tf2_buffer__.lookupTransform("table", "world", ros::Time(0), ros::Duration(0.5));
+			} else {
+					// The calibration pattern could not be found in the camera image. When your robot poses are
+					// selected randomly, you might want to choose a different one.
+			}
+	}
+
+	// You can insert a recalibration here, as you already captured stereo patterns anyway. See here for a
+	// code snippet that does a recalibration.
+
+	// We collected enough patterns and can start the calibration.
+	NxLibCommand calibrateHandEye(cmdCalibrateHandEye);
+	calibrateHandEye.parameters()[itmSetup] = __goal->type;
+
+	// At this point, you need to put your stored robot poses into the command's Transformations parameter.
+	//calibrateHandEye.parameters()[itmTransformations] = ...;
+
+	// Start the calibration. Note that this might take a few minutes if you did a lot of pattern observations.
+	calibrateHandEye.execute();
+
+	//calibrateHandEye[itmResult][itmResidual].getBinaryData(&nx_return_code, __result->score, 0);
+	std::string return_d;
+	std::vector<float> ret;
+	calibrateHandEye.result()[itmResidual].getBinaryData(&nx_return_code,ret,&timestamp);
+
+
+	std::vector<float> transforms;
+	calibrateHandEye.result()[itmPatternPose].getBinaryData(&nx_return_code,transforms,&timestamp);
+
+	// Store the new calibration to the camera's EEPROM.
+	/*
+	NxLibCommand storeCalibration(cmdStoreCalibration);
+	storeCalibration.parameters()[itmCameras] = device_params__.serial_num;
+	storeCalibration.parameters()[itmLink] = true;
+	storeCalibration.execute();
+	*/
+
+	camera__[itmParameters][itmCapture][itmProjector] = true;
+	camera__[itmParameters][itmCapture][itmFrontLight] = false;
+	return 0;
 
 
 }

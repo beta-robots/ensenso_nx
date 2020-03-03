@@ -40,6 +40,15 @@ EnsensoNxNode::EnsensoNxNode():
 	if( !nh__.getParam("dense_cloud", capture_params__.dense_cloud) )
 		ROS_WARN_NAMED("EnensoNxNode", "dense_cloud is not set, it will be set to 0 (false)");
 
+	//calibration params
+	he_cal_params__.decode_data = true;
+	if( !nh__.getParam("cal_decode_data", he_cal_params__.decode_data) )
+		ROS_WARN_NAMED("EnensoNxNode", "Decode data param for Hands eye calibration not found. it will be set to true;");
+
+	he_cal_params__.grid_spacing = 0.0;
+	if( !nh__.getParam("cal_grid_spacing", he_cal_params__.grid_spacing) )
+		ROS_WARN_NAMED("EnensoNxNode", "Grid spacing for Hands eye not found. If decode data iss set to false the hands eye calibration will not work!");
+
 	is_params_loaded__ = true;
 
 	set_camera_service__ = nh__.advertiseService("set_camera", &EnsensoNxNode::setCameraEnable, this);
@@ -55,6 +64,9 @@ EnsensoNxNode::EnsensoNxNode():
 	//ROS_WARN_STREAM("NODE NAME: "<<ros::this_node::getName());
 	snapshot_action__.reset(new actionlib::SimpleActionServer<sensor_msgs::AdvancedSnapshotCloudAction>(ros::NodeHandle(), ros::this_node::getName() + "/advanced_snapshot/", boost::bind(&EnsensoNxNode::advancedSnapshotCallback, this, _1), false));
 	snapshot_action__->start();
+
+	handseye_calibration_action__.reset(new actionlib::SimpleActionServer<ensenso_nx::HECalibrationAction>(ros::NodeHandle(), ros::this_node::getName() + "/handseye_calibration/", boost::bind(&EnsensoNxNode::HandsEyeCalibrationCallback, this, _1), false));
+	handseye_calibration_action__->start();
 
 	std::cout << "ROS EnsensoNxNode Settings: " << std::endl;
 	std::cout << "\trun mode: \t" << run_mode__<< std::endl;
@@ -161,6 +173,7 @@ bool EnsensoNxNode::setCameraEnable(std_srvs::SetBoolRequest& __req, std_srvs::S
 		if( camera__ )
 		{
 			camera__->configureCapture(capture_params__);
+			camera__->configureHECal(he_cal_params__);
 			is_camera_enabled__ = true;
 			__res.message = "EnsensoNx is Ready";
 		}
@@ -390,6 +403,17 @@ void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshot
 		}
 	}
 	return;
+
+}
+
+void EnsensoNxNode::HandsEyeCalibrationCallback(const ensenso_nx::HECalibrationGoalConstPtr &__goal)
+{
+
+	ensenso_nx::HECalibrationResultPtr res;
+
+	camera__->HandsEyeCalibration(__goal,res);
+
+
 
 }
 

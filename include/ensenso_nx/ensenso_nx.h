@@ -2,12 +2,17 @@
 #define ___ENSENSO_NX___ENSENSO_NX_H___
 
 #include <iostream>
+#include <ros/ros.h>
 #include <cmath>
 
 #include <pcl/point_types.h>
 #include <pcl/io/pcd_io.h>
-#include <sensor_msgs/Image.h>
 
+#include <sensor_msgs/Image.h>
+#include <ensenso_nx/HECalibrationAction.h>
+#include <tf2_ros/transform_listener.h>
+#include <motion_server/FreeModeAction.h>
+#include <actionlib/client/simple_action_client.h>
 #include <nxLib.h>
 
 
@@ -39,6 +44,12 @@ struct CaptureParams
 	}
 };
 
+struct HECalParams
+{
+	double grid_spacing = 0.0;
+	bool decode_data = true;
+};
+
 
 class Device
 {
@@ -46,9 +57,15 @@ protected:
 
 	DeviceParams device_params__;
 	CaptureParams capture_params__;
+	HECalParams he_cal_params__;
+
+	actionlib::SimpleActionClient<motion_server::FreeModeAction> free_mode__;
 
 	NxLibItem nx_lib_root__;
 	NxLibItem camera__;
+	tf2_ros::Buffer tf2_buffer__;
+	//std::shared_ptr<tf2_ros::TransformListener> tf_listener_ptr__;
+
 
 public:
 	/** \brief Constructor with serial number
@@ -67,6 +84,8 @@ public:
 	**/
 	void configureCapture(const CaptureParams & __params);
 
+	void configureHECal(const HECalParams & __params);
+
 	/** \brief Set exposure in microseconds
 	 * Set exposure in microseconds
 	 * \param _exposure: exposure in milliseconds, a value of 0 indicates autoexposure
@@ -81,6 +100,7 @@ public:
 	int capture(pcl::PointCloud<pcl::PointXYZ> & __p_cloud);
 	int capture(pcl::PointCloud<pcl::PointXYZI> & __p_cloud);
 	int capture(pcl::PointCloud<pcl::PointXYZRGB> & __p_cloud);
+	int HandsEyeCalibration(const ensenso_nx::HECalibrationGoalConstPtr &__goal, const ensenso_nx::HECalibrationResultConstPtr &__result);
 
 
 protected:

@@ -1,0 +1,17 @@
+uint16 position_number = 20
+string type
+string FIXED = "valFixed"
+string MOVING = "valMoving"
+---
+uint8 transform
+float64 score #(the lower the best)
+
+
+---
+
+uint32 percentage
+uint8 status
+uint8 STORING_POSES = 0
+uint8 CALCULATING_POSITION = 1
+
+

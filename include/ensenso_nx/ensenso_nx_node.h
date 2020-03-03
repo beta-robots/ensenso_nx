@@ -47,6 +47,7 @@ public:
 protected:
 	std::shared_ptr<Device> camera__;
 	CaptureParams capture_params__;
+	HECalParams he_cal_params__;
 	bool grabCloud();
 	bool grabCloudGrayScale();
 	bool grabCloudRGB();
@@ -78,8 +79,10 @@ protected:
 	std::string serial_number__;
 
 	std::shared_ptr<actionlib::SimpleActionServer<sensor_msgs::AdvancedSnapshotCloudAction> > snapshot_action__;
+	std::shared_ptr<actionlib::SimpleActionServer<ensenso_nx::HECalibrationAction> > handseye_calibration_action__;
 
-	void advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshotCloudGoalConstPtr &goal );
+	void advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshotCloudGoalConstPtr &__goal );
+	void HandsEyeCalibrationCallback(const ensenso_nx::HECalibrationGoalConstPtr &__goal);
 };
 
 }
