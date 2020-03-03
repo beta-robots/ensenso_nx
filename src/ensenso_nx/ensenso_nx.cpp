@@ -493,9 +493,23 @@ int Device::HandsEyeCalibration(const ensenso_nx::HECalibrationGoalConstPtr &__g
 	std::vector<float> ret;
 	calibrateHandEye.result()[itmResidual].getBinaryData(&nx_return_code,ret,&timestamp);
 
+	std::cout << "residual" << std::endl;
+	for (size_t i = 0; i < ret.size(); i++)
+	{
+		std::cout << ret[i]<< " ";
+
+	}
+	std::cout << std::endl;
 
 	std::vector<float> transforms;
 	calibrateHandEye.result()[itmPatternPose].getBinaryData(&nx_return_code,transforms,&timestamp);
+	std::cout << "transform" << std::endl;
+	for (size_t i = 0; i < ret.size(); i++)
+	{
+		std::cout << transforms[i]<< " ";
+
+	}
+	std::cout << std::endl;
 
 	// Store the new calibration to the camera's EEPROM.
 	/*
