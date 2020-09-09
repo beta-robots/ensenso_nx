@@ -1,5 +1,5 @@
-uint16 position_number = 20
-string type
+uint16 position_number
+string type = "valFixed"
 string FIXED = "valFixed"
 string MOVING = "valMoving"
 ---

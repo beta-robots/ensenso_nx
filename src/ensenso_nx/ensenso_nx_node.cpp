@@ -86,7 +86,9 @@ EnsensoNxNode::EnsensoNxNode():
 	is_camera_enabled__ = false;
 	std_srvs::SetBool enable_camera;
 	enable_camera.request.data = true;
+	ROS_WARN("Enabling camera");
 	setCameraEnable(enable_camera.request, enable_camera.response);
+	ROS_WARN("End camera constructor");
 }
 
 EnsensoNxNode::~EnsensoNxNode()
@@ -167,13 +169,19 @@ bool EnsensoNxNode::setCameraEnable(std_srvs::SetBoolRequest& __req, std_srvs::S
 {
 	// if called again, and the camera is already opened, it will destroy/close and reopen again
 	grab_locker__.lock();
+	ROS_WARN("deb1");
 	if( __req.data && !is_camera_enabled__ )
 	{
+		ROS_WARN("deb2");
 		camera__.reset(new Device(serial_number__));
+		ROS_WARN("deb3");
 		if( camera__ )
 		{
+			ROS_WARN("configure capture");
 			camera__->configureCapture(capture_params__);
-			camera__->configureHECal(he_cal_params__);
+			//ROS_WARN("configure HE");
+			//camera__->configureHECal(he_cal_params__);
+			ROS_WARN("End configure ");
 			is_camera_enabled__ = true;
 			__res.message = "EnsensoNx is Ready";
 		}
@@ -225,6 +233,7 @@ bool EnsensoNxNode::grabCloudGrayScale()
 	std::cout <<"inside grab grayscale capturing" << std::endl;
 
 	int good_result = 1;
+	std::cout <<"graydeb1" << std::endl;
 	int result = camera__->capture(cloud_grayscale__);
 		std::cout <<"captured" << std::endl;
 	if ( result == good_result )
@@ -267,6 +276,7 @@ bool EnsensoNxNode::grabCloudRGB()
 
 void EnsensoNxNode::publisherCallBack(const ros::TimerEvent& __e)
 {
+	std::cout << "PUBLISHERRR" << std::endl;
 	if( grab_locker__.try_lock() )
 	{
 		bool result = grabCloud();
@@ -318,6 +328,7 @@ bool EnsensoNxNode::pointCloudServiceCallback(sensor_msgs::SnapshotCloud::Reques
 
 void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshotCloudGoalConstPtr &__goal )
 {
+	std::cout << "iNSIDE advancedSnapshotCallback" << std::endl;
 
 	sensor_msgs::AdvancedSnapshotCloudResult res;
 	capture_params__.dense_cloud = __goal->dense_cloud;
@@ -387,6 +398,7 @@ void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshot
 	}
 	else
 	{
+		std::cout << "ensenso_nx: no image type called! "<< std::endl;
 
 		cloud__.clear();
 		grab_locker__.lock();
@@ -408,7 +420,7 @@ void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshot
 
 void EnsensoNxNode::HandsEyeCalibrationCallback(const ensenso_nx::HECalibrationGoalConstPtr &__goal)
 {
-
+	std::cout << "Inside callback!!!!!!!!: " << std::endl;
 	ensenso_nx::HECalibrationResultPtr res;
 
 	camera__->HandsEyeCalibration(__goal,res);

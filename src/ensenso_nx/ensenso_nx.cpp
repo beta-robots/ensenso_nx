@@ -8,8 +8,8 @@ namespace ensenso_nx
 void ensensoExceptionHandling (const NxLibException &ex,
 		 std::string func_nam)
 {
-	PCL_ERROR ("%s: NxLib error %s (%d) occurred while accessing item %s.\n", func_nam.c_str (), ex.getErrorText ().c_str (), ex.getErrorCode (),
-	 ex.getItemPath ().c_str ());
+	PCL_ERROR ("%s: NxLib error %s (%d) occurred while accessing item %s.\n", func_nam.c_str(), ex.getErrorText().c_str (), ex.getErrorCode(),
+	 ex.getItemPath().c_str ());
 	if (ex.getErrorCode () == NxLibExecutionFailed)
 	{
 		NxLibCommand cmd ("");
@@ -18,11 +18,20 @@ void ensensoExceptionHandling (const NxLibException &ex,
 }
 
 Device::Device(const std::string & __serial_num):
-	free_mode__("motion_server/free_mode", true)
+	free_mode__("/motion_server/free_mode", true)
 {
 	std::cout << "EnsensoNx::Device: Opening camera ..." << std::endl;
 
+	try{
 	nxLibInitialize(true);
+	}
+	catch(NxLibException &ex)
+	{
+		ensensoExceptionHandling(ex,"Initialize");
+
+	}
+
+
 
 	// Create an object referencing the camera's tree item, for easier access:
 	camera__ = nx_lib_root__[itmCameras][itmBySerialNo][__serial_num];
@@ -33,12 +42,13 @@ Device::Device(const std::string & __serial_num):
 	}
 	device_params__.serial_num = camera__[itmSerialNumber].asString();
 	//tf_listener_ptr__.reset(new tf2_ros::TransformListener(tf2_buffer__));
-
 	NxLibCommand open(cmdOpen);
+
 	open.parameters()[itmCameras] = device_params__.serial_num;
 	open.execute();
-	free_mode__.waitForServer();
-	std::cout << "EnsensoNx::Device: Camera open. SN: " << device_params__.serial_num << std::endl;
+	std::cout << "EnsensoNx::Device: Camera open." << device_params__.serial_num << std::endl;
+	free_mode__.waitForServer(ros::Duration(2.0));
+
 }
 
 Device::~Device()
@@ -94,6 +104,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 	NxLibCommand cam(cmdCapture);
 	cam.parameters()[itmTimeout] = 25000;
 	cam.execute();
+	
 	NxLibCommand (cmdComputeDisparityMap).execute();
 	NxLibCommand (cmdComputePointMap).execute();
 
@@ -154,57 +165,196 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZ> & _p_cloud)
 }
 
 
-
 int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 {
 
+
+	cv::Mat img_cv_raw_t, img_cv_raw_now, img_cv_rect_t, img_cv_rect_now;
 	int ww, hh,www,hhh;
 	float px;
 	std::vector<float> raw_points;
 	std::vector<float> raw_img;
-  
-  //raw_img_r  is not used for the moment. The pointcloud is focused in left_lens by default, so right one is hard to use. Nevertheles, here it is!
 	std::vector<std::vector<uint8_t>> raw_img_r;
 	std::vector<std::vector<uint8_t>> raw_img_l;
 	int nx_return_code;
 
+	camera__[itmParameters][itmCapture][itmProjector] = false;
+	//camera__[itmParameters][itmCapture][itmFrontLight] = true;
+//1
+//	camera__[itmParameters][itmCapture][itmMode] = "Raw";
+//	camera__[itmParameters][itmCapture][itmAutoBlackLevel] = true;
+//	camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+//	camera__[itmParameters][itmCapture][itmAutoGain] = false;
+//	camera__[itmParameters][itmCapture][itmBinning] = 1;
+//	camera__[itmParameters][itmCapture][itmBlackLevelOffset] = 0.5;
+//	camera__[itmParameters][itmCapture][itmExposure] = 6.41;
+//	camera__[itmParameters][itmCapture][itmFlashDelay] = -0.0500000000000000028;
+//	camera__[itmParameters][itmCapture][itmFrontLight] = true;
+//	camera__[itmParameters][itmCapture][itmGain] = 1;
+//	camera__[itmParameters][itmCapture][itmGainBoost] = false;
+//	camera__[itmParameters][itmCapture][itmHardwareGamma] = true;
+//	camera__[itmParameters][itmCapture][itmHdr] = true;
+//	camera__[itmParameters][itmCapture][itmMaxFlashTime] = 10.0;
+
+//2
+////	camera__[itmParameters][itmCapture][itmMaxGain] = 4;
+//	camera__[itmParameters][itmCapture][itmMultiExposureFactor] = 1;
+//	camera__[itmParameters][itmCapture][itmPixelClock] = 24;
+//	camera__[itmParameters][itmCapture][itmProjector] = false;
+////	camera__[itmParameters][itmCapture][itmProjectorMinimumDutyCycle] = 0.05;
+//	camera__[itmParameters][itmCapture][itmTargetBrightness] = 80;
+//	camera__[itmParameters][itmCapture][itmTriggerDelay] = 0;
+//	camera__[itmParameters][itmCapture][itmTriggerMode] = "Software";
+////	camera__[itmParameters][itmCapture][itmTriggered] = false;
+//	camera__[itmParameters][itmCapture][itmUseDisparityMapAreaOfInterest] = false;
+//	camera__[itmParameters][itmCapture][itmUseRecalibrator] = false;
+//	camera__[itmParameters][itmCapture][itmWaitForRecalibration] = false;
+
+//21
+//	if (capture_params__.flex_view > 1)
+//	{
+
+//		camera__[itmParameters][itmCapture][itmFlexView] = false;
+//		camera__[itmParameters][itmCapture][itmGainBoost] = false;
+
+//	}
+
+	{
+		NxLibCommand cam(cmdCapture);
+		cam.parameters()[itmTimeout] = 25000;
+
+//		cam.parameters()[itmMode] = "Raw";
+//		cam.parameters()[itmAutoBlackLevel] = true;
+//		cam.parameters()[itmAutoExposure] = false;
+//		cam.parameters()[itmAutoGain] = false;
+//		cam.parameters()[itmBinning] = 1;
+//		cam.parameters()[itmBlackLevelOffset] = 0.5;
+//		cam.parameters()[itmExposure] = 6.41;
+//		cam.parameters()[itmFlashDelay] = -0.0500000000000000028;
+//		cam.parameters()[itmFrontLight] = true;
+//		cam.parameters()[itmGain] = 1;
+//		cam.parameters()[itmGainBoost] = false;
+//		cam.parameters()[itmHardwareGamma] = true;
+//		cam.parameters()[itmHdr] = true;
+//		cam.parameters()[itmMaxFlashTime] = 10;
+//		cam.parameters()[itmMaxGain] = 4;
+//		cam.parameters()[itmMultiExposureFactor] = 1;
+//		cam.parameters()[itmPixelClock] = 24;
+//		cam.parameters()[itmProjector] = false;
+//		cam.parameters()[itmProjectorMinimumDutyCycle] = 0.05;
+//		cam.parameters()[itmTargetBrightness] = 80;
+//		cam.parameters()[itmTriggerDelay] = 0;
+//		cam.parameters()[itmTriggerMode] = "Software";
+//		cam.parameters()[itmTriggered] = false;
+//		cam.parameters()[itmUseDisparityMapAreaOfInterest] = false;
+//		cam.parameters()[itmUseRecalibrator] = false;
+//		cam.parameters()[itmWaitForRecalibration] = false;
+
+		//3
+//		cam.execute();
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+
+//		//	//Get 2D image raw data
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+
+//		cam.execute();
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+
+//		//	//Get 2D image raw data
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+
+
+//		cam.execute();
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+
+//		//	//Get 2D image raw data
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+
+//		cam.execute();
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+
+//		//	//Get 2D image raw data
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+
+//		cam.execute();
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+
+//		//	//Get 2D image raw data
+//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+
+
+
+		cam.execute();
+	}
+
 	NxLibCommand (cmdComputeDisparityMap).execute();
 	NxLibCommand (cmdComputePointMap).execute();
 
+
 	//Get image dimensions
-	camera__[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
+camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
 
-	//Get 3D image raw data
-	camera__[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points, 0);
+//	//Get 2D image raw data
+camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+//cv::imshow( "Raw", img_cv_raw_t );
+//cv::imshow( "Rect0", img_cv_rect_t );
+//cv::waitKey(0);
+//cv::imshow( "IMG", img_cv_rect_t );
+//cv::waitKey();
 
+float k_1[3][3] = {{-1.0,-1.0,-1.0},{-1.0,9.0,-1.0},{-1.0,-1.0,-1.0}};
+cv::Mat kernel(3, 3, CV_32F,k_1);
+
+cv::Mat kernel2 = cv::Mat::ones(3, 3, CV_32F)/ (float)(9.0);
+
+
+
+
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel);
+//cv::imshow( "K_1", img_cv_rect_t );
+//cv::waitKey(10000);
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel2);
+//cv::imshow( "K_2", img_cv_rect_t );
+//cv::waitKey(10000);
+
+
+//cv::Mat gx, gy, angle;
+//cv::Sobel(img_cv_rect_t, gx, CV_32F, 1, 0);
+//cv::Sobel(img_cv_rect_t, gy, CV_32F, 0, 1);
+//cv::cartToPolar(gx, gy,img_cv_rect_t, angle);
+//cv::imshow( "gx", gx );
+//cv::waitKey(10000);
+//cv::imshow( "gy", gy );
+//cv::waitKey(10000);
+
+
+
+
+if (capture_params__.flex_view > 1)
+{
+
+	camera__[itmParameters][itmCapture][itmFlexView] = static_cast<int>(capture_params__.flex_view);
+	camera__[itmParameters][itmCapture][itmGainBoost] = true;
+
+}
+camera__[itmParameters][itmCapture][itmProjector] = true;
+{
+	NxLibCommand cam(cmdCapture);
+	cam.parameters()[itmTimeout] = 25000;
+	cam.execute();
+}
+//NxLibCommand (cmdCapture).execute();
+NxLibCommand (cmdComputeDisparityMap).execute();
+NxLibCommand (cmdComputePointMap).execute();
 	//Get 2D image raw data
 	raw_img_r.clear();
 	raw_img_l.clear();
 	int photos_set = capture_params__.flex_view;
 	photos_set = photos_set - (photos_set % 4);
-	if (!flexview_enabled__)
-	{
-		photos_set = 1;
-		raw_img_r.resize(1);
-		raw_img_l.resize(1);
-		camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-		camera__[itmImages][itmRectified][itmLeft].getBinaryData(raw_img_l[0], 0);
-		camera__[itmImages][itmRectified][itmRight].getBinaryData(raw_img_r[0], 0);
-	}
-	else
-	{
-		camera__[itmImages][itmRectified][0][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-		raw_img_r.resize(photos_set);
-		raw_img_l.resize(photos_set);
-		for (int i = 0; i < photos_set; i++)
-		{
 
-      camera__[itmImages][itmRectified][i][itmLeft].getBinaryData(&nx_return_code, raw_img_l[i], 0);
-      camera__[itmImages][itmRectified][i][itmRight].getBinaryData(&nx_return_code, raw_img_r[i], 0);
-
-		}
-
-	}
+		camera__[itmImages][itmPointMap].getBinaryDataInfo(&ww, &hh, 0,0,0,0);
+		camera__[itmImages][itmPointMap].getBinaryData(&nx_return_code, raw_points, 0);
+/*
 	raw_img.resize((unsigned int)ww*(unsigned int)hh);
 
 	for (size_t i = 0; i < raw_img.size(); i++)
@@ -221,7 +371,18 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		}
 		raw_img[i] = raw_img[i]/raw_img_l.size();
 
-	}
+	}*/
+
+
+
+//	if (aaaa > 1){
+		//cv::imshow( "Raw", img_cv_raw_now );
+//		cv::imshow( "Rect", img_cv_rect_now );
+//		cv::waitKey(0);
+//	}
+//		aaaa++;
+
+		//camera__[itmParameters][itmCapture][itmProjector] = true;
 
 	//Move raw data to point cloud
 	_p_cloud.width = (unsigned int)ww;
@@ -238,7 +399,8 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 				_p_cloud.points.at(kk).x = px/1000.;
 				_p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
 				_p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
-				_p_cloud.points.at(kk).intensity = raw_img[(ii*_p_cloud.width + jj)];//raw_img[kk];
+				_p_cloud.points.at(kk).intensity = static_cast<int>(img_cv_rect_t.at<uchar>(ii*_p_cloud.width + jj));//raw_img[(ii*_p_cloud.width + jj)];//raw_img[kk];
+				//std::cout << static_cast<int>(img_cv_rect_t.at<uchar>(ii*_p_cloud.width + jj)) << std::endl;
 				kk++;
 			}
 			else //in case of nan, check dense_cloud_ to fill in the cloud or not
@@ -249,7 +411,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 					_p_cloud.points.at(kk).x = std::nan("");
 					_p_cloud.points.at(kk).y = std::nan("");
 					_p_cloud.points.at(kk).z = std::nan("");
-					_p_cloud.points.at(kk).intensity = 0;
+					_p_cloud.points.at(kk).intensity = static_cast<int>(img_cv_rect_t.at<uchar>(ii*_p_cloud.width + jj));
 					kk++;
 				}
 				else
@@ -262,7 +424,7 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 
 	//resize with number valid points. If _dense_cloud, just set the flag ordered to true
 	_p_cloud.resize(kk);//checks if kk=ww*hh to set the cloud as ordered (width,height) or unordered (width=size,height=1)
-	_p_cloud.is_dense = capture_params__.dense_cloud;
+//	_p_cloud.is_dense = capture_params__.dense_cloud;
 
 	//debug message
 	//     std::cout << "Cloud capture: " << std::endl <<
@@ -369,8 +531,25 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZRGB> & _p_cloud)
 void Device::configureCapture()
 {
 
+	std::cout << "Configuring capture " <<  std::endl;
 	camera__[itmParameters][itmCapture][itmAutoExposure] = capture_params__.auto_exposure;
+
+	camera__[itmParameters][itmCapture][itmAutoGain] = capture_params__.auto_exposure;
 	camera__[itmParameters][itmCapture][itmExposure    ] = static_cast<double>(capture_params__.exposure_time); //TODO check if requires cast to double.
+	camera__[itmParameters][itmCapture][itmHdr] = true;
+	camera__[itmParameters][itmCapture][itmMode] = "Rectified";
+
+//	camera__[itmParameters][itmDisparityMap][itmPostProcessing][itmFilling][itmBorderSpread] = 5;
+//	camera__[itmParameters][itmDisparityMap][itmPostProcessing][itmMedianFilterRadius] = 3;
+//	camera__[itmParameters][itmDisparityMap][itmPostProcessing][itmSpeckleRemoval][itmComponentThreshold] = 5;
+//	camera__[itmParameters][itmCapture][itmMode] = 'Raw';
+
+//camera__[itmParameters][itmCapture][itmProjector] = false;
+
+
+
+
+	//camera__[itmParameters][itmCapture][itmProjector] = false;
 
 
 	if (capture_params__.flex_view < 2)
@@ -385,13 +564,15 @@ void Device::configureCapture()
 
 		flexview_enabled__ = true;
 		camera__[itmParameters][itmCapture][itmFlexView] = static_cast<int>(capture_params__.flex_view);
-		//camera__[itmParameters][itmCapture][itmHdr] = true;
-		//camera__[itmParameters][itmCapture][itmGainBoost] = true;
+
+		camera__[itmParameters][itmCapture][itmGainBoost] = true;
 
 	}
 
 	if (capture_params__.flex_view > 8)
 			camera__[itmParameters][itmDisparityMap][itmStereoMatching][itmMethod] = "Correlation";
+
+	std::cout << "finished configuring capture " <<  std::endl;
 
 
 }
@@ -405,32 +586,60 @@ int Device::HandsEyeCalibration(const ensenso_nx::HECalibrationGoalConstPtr &__g
 
 	// will need to adapt this line to the size of the calibration pattern that you are using.
 	// Discard any pattern observations that might already be in the pattern buffer.
+	std::cout << "deb1: " << std::endl;
+		int ww, hh;
 	NxLibCommand(cmdDiscardPatterns).execute();
+	std::cout << "deb2: " << std::endl;
+
 	NxLibCommand decode(cmdCollectPattern);
+	std::cout << "deb3: " << std::endl;
+
 	motion_server::FreeModeGoal goal_free_mode;
+	std::cout << "deb4: " << std::endl;
+
 	goal_free_mode.until_button_pressed.data = true;
+	std::cout << "deb5: " << std::endl;
+
 	int nx_return_code;
+	std::cout << "deb6: " << std::endl;
+
 	double timestamp;
+	std::cout << "deb7: " << std::endl;
+
 	if (!he_cal_params__.decode_data)
 	{
+		std::cout << "deb71: " << std::endl;
 			camera__[itmParameters][itmPattern][itmGridSpacing] = he_cal_params__.grid_spacing;
 	}
 	else
 	{
+		/*
+		std::cout << "deb72: " << std::endl;
 			decode.parameters()[itmDecodeData] = true;
-			decode.execute();
+
+			try {
+				decode.execute();
+			} catch (NxLibException& ex)
+			{
+				ensensoExceptionHandling(ex,"decode_data");
+			}
+*/
 	}
 
 
 
 	// Turn off the camera's projector so that we can observe the calibration pattern.
+	std::cout << "deb73: " << std::endl;
 	camera__[itmParameters][itmCapture][itmProjector] = false;
+	std::cout << "deb74: " << std::endl;
 	camera__[itmParameters][itmCapture][itmFrontLight] = true;
 
 	// You can adapt this number depending on how accurate you need the
 	// calibration to be.
 	for (int i = 0; i < __goal->position_number; i++) {
 			// Move your robot to a new position from which the pattern can be seen. It might be a good idea to
+		std::cout << "deb8: " << std::endl;
+
 			free_mode__.sendGoal(goal_free_mode);
 			std::cout << "Waiting to confirm new position" << std::endl;
 			free_mode__.waitForResult();
@@ -441,34 +650,54 @@ int Device::HandsEyeCalibration(const ensenso_nx::HECalibrationGoalConstPtr &__g
 			sleep(2);
 
 			// Observe the calibration pattern and store the observation in the pattern buffer.
+			try{
 			NxLibCommand capture(cmdCapture);
+			capture.parameters()[itmTimeout] = 25000;
 			capture.parameters()[itmCameras] = device_params__.serial_num;
 			capture.execute();
+			} catch (NxLibException& ex)
+			{
+				ensensoExceptionHandling(ex,"capture");
+
+
+			}
 			bool foundPattern = false;
 			try {
-				std::vector<std::vector<float>> matrix_t;
+				std::vector<std::vector<double>> matrix_t;
+				matrix_t.resize(3);
+				matrix_t[0].resize(3);
+				matrix_t[1].resize(3);
+				matrix_t[2].resize(3);
 					NxLibCommand collectPattern(cmdCollectPattern);
 					collectPattern.parameters()[itmCameras] = device_params__.serial_num;
 					collectPattern.execute();
 
-					collectPattern.result()[itmStereo][itmLeft][itmTransformation].getBinaryData(&nx_return_code,matrix_t,&timestamp);
+					NxLibItem item_pattern = collectPattern.result()[itmStereo][0][itmLeft][itmTransformation];
+					//std::cout << item_pattern.asDouble() << std::endl;
+					collectPattern.result()[itmStereo][0][itmLeft][itmTransformation].getBinaryData(&nx_return_code,matrix_t,&timestamp);
 
 					std::cout << "Matrix: " << std::endl;
 					for (size_t i = 0; i< matrix_t.size(); i++)
 					{
 						for (size_t j = 0; j< matrix_t[i].size(); j++)
 						{
+							//std::cout << item_pattern[i][j].asDouble() << " ";
 							std::cout << matrix_t[i][j] << " ";
 						}
 						std::cout << std::endl;
 					}
 					foundPattern = true;
-			} catch (NxLibException&) {}
+			} catch (NxLibException& ex)
+			{
+				ensensoExceptionHandling(ex,"collect_pattern");
+
+
+			}
 
 			if (foundPattern) {
 					// We actually found a pattern. Get the current pose of your robot (from which the pattern was
 					// observed) and store it somewhere.
-					geometry_msgs::TransformStamped table_to_ensenso = tf2_buffer__.lookupTransform("table", "world", ros::Time(0), ros::Duration(0.5));
+					//geometry_msgs::TransformStamped table_to_ensenso = tf2_buffer__.lookupTransform("table", "world", ros::Time(0), ros::Duration(0.5));
 			} else {
 					// The calibration pattern could not be found in the camera image. When your robot poses are
 					// selected randomly, you might want to choose a different one.
@@ -521,6 +750,7 @@ int Device::HandsEyeCalibration(const ensenso_nx::HECalibrationGoalConstPtr &__g
 
 	camera__[itmParameters][itmCapture][itmProjector] = true;
 	camera__[itmParameters][itmCapture][itmFrontLight] = false;
+
 	return 0;
 
 
