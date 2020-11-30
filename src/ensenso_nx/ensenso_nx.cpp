@@ -170,6 +170,9 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 
 
 	cv::Mat img_cv_raw_t, img_cv_raw_now, img_cv_rect_t, img_cv_rect_now;
+	std::vector<cv::Mat> mat_array;
+	std::vector<float> exposures;
+
 	int ww, hh,www,hhh;
 	float px;
 	std::vector<float> raw_points;
@@ -178,157 +181,604 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 	std::vector<std::vector<uint8_t>> raw_img_l;
 	int nx_return_code;
 
-	camera__[itmParameters][itmCapture][itmProjector] = false;
-	//camera__[itmParameters][itmCapture][itmFrontLight] = true;
-//1
-//	camera__[itmParameters][itmCapture][itmMode] = "Raw";
-//	camera__[itmParameters][itmCapture][itmAutoBlackLevel] = true;
-//	camera__[itmParameters][itmCapture][itmAutoExposure] = true;
-//	camera__[itmParameters][itmCapture][itmAutoGain] = false;
-//	camera__[itmParameters][itmCapture][itmBinning] = 1;
-//	camera__[itmParameters][itmCapture][itmBlackLevelOffset] = 0.5;
-//	camera__[itmParameters][itmCapture][itmExposure] = 6.41;
-//	camera__[itmParameters][itmCapture][itmFlashDelay] = -0.0500000000000000028;
-//	camera__[itmParameters][itmCapture][itmFrontLight] = true;
-//	camera__[itmParameters][itmCapture][itmGain] = 1;
-//	camera__[itmParameters][itmCapture][itmGainBoost] = false;
-//	camera__[itmParameters][itmCapture][itmHardwareGamma] = true;
-//	camera__[itmParameters][itmCapture][itmHdr] = true;
-//	camera__[itmParameters][itmCapture][itmMaxFlashTime] = 10.0;
 
-//2
-////	camera__[itmParameters][itmCapture][itmMaxGain] = 4;
-//	camera__[itmParameters][itmCapture][itmMultiExposureFactor] = 1;
-//	camera__[itmParameters][itmCapture][itmPixelClock] = 24;
-//	camera__[itmParameters][itmCapture][itmProjector] = false;
-////	camera__[itmParameters][itmCapture][itmProjectorMinimumDutyCycle] = 0.05;
-//	camera__[itmParameters][itmCapture][itmTargetBrightness] = 80;
-//	camera__[itmParameters][itmCapture][itmTriggerDelay] = 0;
-//	camera__[itmParameters][itmCapture][itmTriggerMode] = "Software";
-////	camera__[itmParameters][itmCapture][itmTriggered] = false;
-//	camera__[itmParameters][itmCapture][itmUseDisparityMapAreaOfInterest] = false;
-//	camera__[itmParameters][itmCapture][itmUseRecalibrator] = false;
-//	camera__[itmParameters][itmCapture][itmWaitForRecalibration] = false;
-
-//21
-//	if (capture_params__.flex_view > 1)
-//	{
-
-//		camera__[itmParameters][itmCapture][itmFlexView] = false;
-//		camera__[itmParameters][itmCapture][itmGainBoost] = false;
-
-//	}
 
 	{
 		NxLibCommand cam(cmdCapture);
-		cam.parameters()[itmTimeout] = 25000;
-
-//		cam.parameters()[itmMode] = "Raw";
-//		cam.parameters()[itmAutoBlackLevel] = true;
-//		cam.parameters()[itmAutoExposure] = false;
-//		cam.parameters()[itmAutoGain] = false;
-//		cam.parameters()[itmBinning] = 1;
-//		cam.parameters()[itmBlackLevelOffset] = 0.5;
-//		cam.parameters()[itmExposure] = 6.41;
-//		cam.parameters()[itmFlashDelay] = -0.0500000000000000028;
-//		cam.parameters()[itmFrontLight] = true;
-//		cam.parameters()[itmGain] = 1;
-//		cam.parameters()[itmGainBoost] = false;
-//		cam.parameters()[itmHardwareGamma] = true;
-//		cam.parameters()[itmHdr] = true;
-//		cam.parameters()[itmMaxFlashTime] = 10;
-//		cam.parameters()[itmMaxGain] = 4;
-//		cam.parameters()[itmMultiExposureFactor] = 1;
-//		cam.parameters()[itmPixelClock] = 24;
-//		cam.parameters()[itmProjector] = false;
-//		cam.parameters()[itmProjectorMinimumDutyCycle] = 0.05;
-//		cam.parameters()[itmTargetBrightness] = 80;
-//		cam.parameters()[itmTriggerDelay] = 0;
-//		cam.parameters()[itmTriggerMode] = "Software";
-//		cam.parameters()[itmTriggered] = false;
-//		cam.parameters()[itmUseDisparityMapAreaOfInterest] = false;
-//		cam.parameters()[itmUseRecalibrator] = false;
-//		cam.parameters()[itmWaitForRecalibration] = false;
-
-		//3
-//		cam.execute();
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-
-//		//	//Get 2D image raw data
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
-
-//		cam.execute();
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-
-//		//	//Get 2D image raw data
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
-
-
-//		cam.execute();
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-
-//		//	//Get 2D image raw data
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
-
-//		cam.execute();
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-
-//		//	//Get 2D image raw data
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
-
-//		cam.execute();
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
-
-//		//	//Get 2D image raw data
-//		camera__[itmImages][itmRaw][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+		//cam.parameters()[itmTimeout] = 25000;
+		std::cout << "deb0. True is "<<true << " and false is "<<false << std::endl;
 
 
 
-		cam.execute();
+		camera__[itmParameters][itmCapture][itmFlexView] = false;
+		try {
+			camera__[itmParameters][itmCapture][itmAbsoluteBlackLevelOffset] = "0";
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb1");
+		}
+
+		try {
+			camera__[itmParameters][itmCapture][itmAutoBlackLevel] = true;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb2");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb4");
+		}
+
+		try {
+			camera__[itmParameters][itmCapture][itmAutoGain] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb4");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmBinning] = 1;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb5");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmBlackLevelOffset] = 0.5;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb6");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmBlackLevelOffsetCalibration][itmLeft] = 0;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb7");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmBlackLevelOffsetCalibration][itmRight] = 0;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb8");
+		}
+
+
+
+		try {
+		camera__[itmParameters][itmCapture][itmFlashDelay] = -0.0500000000000000028;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb10");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmCapture][itmFlexView] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb11");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmFrontLight] = true;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb12");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmGain] = 1;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb13");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmGainBoost] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb14");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmHardwareGamma] = true;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb15");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmHdr] = true;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb16");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmImageBuffer][itmCount] = 0;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb17");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmImageBuffer][itmOverflowPolicy] = "DiscardOld";
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb18");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmImageBuffer][itmSize] = 1;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb19");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmMaxFlashTime] = 10;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb20");
+		}
+		try {
+		camera__[itmParameters][itmCapture][itmMaxGain] = 4;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb21");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmMode] = "Rectified";
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb22");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmMultiExposureFactor] = 1;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb23");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmPixelClock] = 24;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb24");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmProjector] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb25");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmProjectorMinimumDutyCycle] = 0.05;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb26");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmTargetBrightness] = 80;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb27");
+		}
+
+
+		try {
+		camera__[itmParameters][itmCapture][itmTriggerDelay] = 0;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb28");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmTriggerMode] = "Software";
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb29");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmTriggered] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb30");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmUseDisparityMapAreaOfInterest] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb31");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmUseRecalibrator] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"deb32");
+		}
+
+		try {
+		camera__[itmParameters][itmCapture][itmWaitForRecalibration] = false;
+		} catch (NxLibException& ex) {
+			ensensoExceptionHandling(ex,"de33");
+		}
+
+
 	}
+NxLibCommand (cmdCapture).execute();
+usleep(25000);
 
+NxLibCommand (cmdCapture).execute();
+
+double timestamp;
+camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo (0, 0, 0, 0, 0, &timestamp);
+
+NxLibCommand (cmdRectifyImages).execute();
+sleep(1);
+camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+
+/*temps*/
+//double extra_exp = 2.0;
+
+//	cv::Mat mat1, mat2, mat3, mat4, mat5, mat6, mat7, mat8, mat9, mat10, mat11, mat12, mat13, mat14, mat15, mat21, mat22, mat31;
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 0.5 + extra_exp;
+////	camera__[itmParameters][itmCapture][itmTimeout] = 25000;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+////	NxLibCommand (cmdComputePointMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat1, 0);
+//	exposures.push_back(0.5);
+//	usleep(25000);
+
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 1.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat2, 0);
+//	exposures.push_back(1.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 2.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat3, 0);
+//	exposures.push_back(2.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 3.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat4, 0);
+//	exposures.push_back(3.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 4.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat5, 0);
+//	exposures.push_back(4.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 5.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat6, 0);
+//	exposures.push_back(5.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 6.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat7, 0);
+//	exposures.push_back(6.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 7.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat8, 0);
+//	exposures.push_back(7.5);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 8.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat9, 0);
+//	exposures.push_back(0.2);
+//	usleep(25000);
+
+//	camera__[itmParameters][itmCapture][itmExposure] = 9.5 + extra_exp;
+//	NxLibCommand (cmdCapture).execute();
+//	NxLibCommand (cmdComputeDisparityMap).execute();
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat10, 0);
+//	exposures.push_back(9.5);
+//	usleep(25000);
+/*temps*/
+
+
+//	cv::imshow( "1", mat1 );
+//	cv::waitKey(0);
+
+//	cv::imshow( "2", mat2 );
+//	cv::waitKey(0);
+
+//	cv::imshow( "3", mat3 );
+//	cv::waitKey(0);
+
+//	cv::imshow( "4", mat4 );
+//	cv::waitKey(0);
+
+//	cv::imshow( "5", mat5 );
+//	cv::waitKey(0);
+
+//	cv::imshow( "6", mat6 );
+//	cv::waitKey(0);
+
+//	cv::imshow( "7", mat7 );
+//	cv::waitKey(0);
+
+
+//	usleep(1000000);
+//	mat_array.push_back(mat1);
+//	mat_array.push_back(mat2);
+//	mat_array.push_back(mat3);
+//	mat_array.push_back(mat4);
+//	mat_array.push_back(mat5);
+//	mat_array.push_back(mat6);
+//	mat_array.push_back(mat7);
+
+//	cv::Mat response;
+//	cv::Ptr<cv::CalibrateDebevec> calibrateDebevec = cv::createCalibrateDebevec();
+//		usleep(1000000);
+//		sleep(2);
+
+//	calibrateDebevec->process(mat_array, response, exposures);
+
+//	std::cout << "deb1" << std::endl;
+
+//	cv::Mat hdr;
+//	cv::Ptr<cv::MergeDebevec> merge_debevec = cv::createMergeDebevec();
+//	merge_debevec->process(mat_array, img_cv_rect_t, exposures, response);
+//	std::cout << "deb2" << std::endl;
+
+
+//	std::cout << "deb0000" << std::endl;
+//	cv::Mat response;
+//		std::cout << "deb00001" << std::endl;
+//	cv::Ptr<cv::CalibrateRobertson> calibrateRobertson = cv::createCalibrateRobertson();
+//		usleep(1000000);
+//		sleep(2);
+//	std::cout << "deb000021" << std::endl;
+//	calibrateRobertson->process(mat_array, response, exposures);
+
+//	std::cout << "deb1" << std::endl;
+
+//	cv::Mat hdr;
+//	cv::Ptr<cv::MergeRobertson> merge_robertson = cv::createMergeRobertson();
+//	merge_robertson->process(mat_array, hdr, exposures, response);
+//	std::cout << "deb2" << std::endl;
+
+//	cv::Mat ldr;
+//	cv::Ptr<cv::Tonemap> tonemap = cv::createTonemap(gamma + static_cast<float>(i));
+//	tonemap->process(hdr, img_cv_rect_t);
+
+//	cv::Ptr<cv::MergeMertens> merge_mertens = cv::createMergeMertens();
+//	merge_mertens->process(mat_array, img_cv_rect_t);
+//	std::cout << "deb4" << std::endl;
+
+/*temps*/
+//cv::addWeighted(mat1,0.5,mat2,0.5,0,mat11);
+//cv::addWeighted(mat3,0.5,mat4,0.5,0,mat12);
+//cv::addWeighted(mat5,0.5,mat6,0.5,0,mat13);
+//cv::addWeighted(mat7,0.5,mat8,0.5,0,mat14);
+//cv::addWeighted(mat9,0.5,mat10,0.5,0,mat15);
+
+//cv::addWeighted(mat11,0.5,mat12,0.5,0,mat21);
+//cv::addWeighted(mat13,0.5,mat14,0.5,0,mat22);
+
+//cv::addWeighted(mat21,0.5,mat22,0.5,0,mat31);
+
+//cv::addWeighted(mat31,0.8,mat15,0.2,0,img_cv_rect_t);
+/*temps*/
+
+/*			std::cout << "deb35.5" << std::endl;
+	try {
+	NxLibCommand (cmdComputePointMap).execute();
+			} catch (NxLibException& ex) {
+				ensensoExceptionHandling(ex,"de35.5");
+			}
+*//*
+			std::cout << "deb36" << std::endl;
+	usleep(20000);
+			std::cout << "deb37" << std::endl;
 	NxLibCommand (cmdComputeDisparityMap).execute();
 	NxLibCommand (cmdComputePointMap).execute();
-
-
+			std::cout << "deb38" << std::endl;
+	usleep(20000);
+			std::cout << "deb39" << std::endl;
+	NxLibCommand (cmdComputeDisparityMap).execute();
+	NxLibCommand (cmdComputePointMap).execute();
+	usleep(20000);
+	NxLibCommand (cmdComputeDisparityMap).execute();
+	NxLibCommand (cmdComputePointMap).execute();
+	usleep(20000);
+	NxLibCommand (cmdComputeDisparityMap).execute();
+	NxLibCommand (cmdComputePointMap).execute();
+	usleep(20000);
+*/
 	//Get image dimensions
-camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+//			std::cout << "deb1" << std::endl;
+//	try {
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo(&www, &hhh, 0,0,0,0);
+//	} catch (NxLibException& ex) {
+//		ensensoExceptionHandling(ex,"de36");
+//	}
 
+
+
+//cv::Mat img_cv_rect_t = cv::Mat::zeros(mat1.size().height, mat1.size().width,CV_32F);
 //	//Get 2D image raw data
-camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
-//cv::imshow( "Raw", img_cv_raw_t );
-//cv::imshow( "Rect0", img_cv_rect_t );
+
+
+//	try {
+
+//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
+//	} catch (NxLibException& ex) {
+//		ensensoExceptionHandling(ex,"de37");
+//	}
+
+//			std::cout << "deb3  " << img_cv_rect_t.size().width << "  "  << img_cv_rect_t.size().height << std::endl;
+//			std::cout << "deb33  " << mat1.size().width << "  "  << mat1.size().height << std::endl;
+
+//cv::imshow( "hdr", hdr*255 );
 //cv::waitKey(0);
-//cv::imshow( "IMG", img_cv_rect_t );
-//cv::waitKey();
 
-float k_1[3][3] = {{-1.0,-1.0,-1.0},{-1.0,9.0,-1.0},{-1.0,-1.0,-1.0}};
+//cv::imshow( "hdr2", hdr );
+//cv::waitKey(0);
+
+
+//cv::imshow( "Original", img_cv_rect_t );
+//cv::waitKey(0);
+
+float k_2[3][3] = {{1.0f/9.0f,1.0f/9.0f,1.0f/9.0f},{1.0f/9.0f,1.0f/9.0f,1.0f/9.0f},{1.0f/9.0f,1.0f/9.0f,1.0f/9.0f}};
+float k_1[3][3] = {{-1.0f,-1.0f,-1.0f},{-1.0f,9.0f,-1.0f},{-1.0f,-1.0f,-1.0f}};
 cv::Mat kernel(3, 3, CV_32F,k_1);
+cv::Mat kernel2(3, 3, CV_32F,k_2);
 
-cv::Mat kernel2 = cv::Mat::ones(3, 3, CV_32F)/ (float)(9.0);
+float k_D[3][3] = {{1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f}};
+cv::Mat kernel_dilate(3, 3, CV_32F,k_D);
+float k_D4[4][4] = {{1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f}};
+cv::Mat kernel_dilate4(4, 4, CV_32F,k_D4);
+float k_D5[5][5] = {{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f}};
+cv::Mat kernel_dilate5(5, 5, CV_32F,k_D5);
 
 
+//float k_D5[5][5] = {{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f},{1.0f,1.0f,1.0f,1.0f,1.0f}};
+//cv::Mat kernel_dilate5(4, 4, CV_32F,k_D4);
 
 
-//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel);
+cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
 //cv::imshow( "K_1", img_cv_rect_t );
 //cv::waitKey(10000);
-//cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel2);
+
+cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel);
+
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
+
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel);
 //cv::imshow( "K_2", img_cv_rect_t );
 //cv::waitKey(10000);
 
 
-//cv::Mat gx, gy, angle;
-//cv::Sobel(img_cv_rect_t, gx, CV_32F, 1, 0);
-//cv::Sobel(img_cv_rect_t, gy, CV_32F, 0, 1);
-//cv::cartToPolar(gx, gy,img_cv_rect_t, angle);
-//cv::imshow( "gx", gx );
-//cv::waitKey(10000);
-//cv::imshow( "gy", gy );
-//cv::waitKey(10000);
+
+cv::Mat gx, gy, img_cv_rect_t2,  angle;
+
+cv::Sobel(img_cv_rect_t, gx, CV_32F, 1, 0, 1);
+cv::Sobel(img_cv_rect_t, gy, CV_32F, 0, 1, 1);
+cv::cartToPolar(gx, gy,img_cv_rect_t, angle);
+//cv::imshow( "polar", img_cv_rect_t );
+//cv::waitKey(1000);
+
+//cv::imshow( "angle", angle );
+//cv::waitKey(1000);
+
+/**trial**/
+//cv::threshold(img_cv_rect_t, img_cv_rect_t2, 27, 255, cv::THRESH_TOZERO);
+//cv::threshold(img_cv_rect_t, img_cv_rect_t2, 15, 255, cv::THRESH_TOZERO);
+/**trial**/
+
+
+//cv::imshow( "polar thresh", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+/**trial**/
+cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t, 7, 255, cv::THRESH_BINARY);
+/**trial**/
+
+
+//cv::imshow( "tresh 1", img_cv_rect_t );
+//cv::waitKey(1000);
+
+//cv::morphologyEx(img_cv_rect_t2,img_cv_rect_t2, cv::MORPH_OPEN, kernel_dilate4);
+
+//cv::imshow( "Morph open", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+//cv::morphologyEx(img_cv_rect_t2,img_cv_rect_t2, cv::MORPH_CLOSE, kernel_dilate5);
+
+//cv::imshow( "Morph close", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+//cv::filter2D(img_cv_rect_t2, img_cv_rect_t2,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t2, 7, 255, cv::THRESH_TOZERO);
+
+//cv::imshow( "tresh 2", img_cv_rect_t2 );
+//cv::waitKey(1000);
 
 
 
+
+
+//cv::filter2D(img_cv_rect_t2, img_cv_rect_t2,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t2, 10, 255, cv::THRESH_TOZERO);
+
+//cv::imshow( "tresh 3", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+//cv::filter2D(img_cv_rect_t2, img_cv_rect_t2,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t2, 10, 255, cv::THRESH_TOZERO);
+
+//cv::imshow( "tresh 4", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+//cv::filter2D(img_cv_rect_t2, img_cv_rect_t2,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t2, 10, 255, cv::THRESH_TOZERO);
+
+//cv::imshow( "tresh 5", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+//cv::filter2D(img_cv_rect_t2, img_cv_rect_t2,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t, 10, 255, cv::THRESH_TOZERO);
+
+//cv::imshow( "tresh 6", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+//cv::filter2D(img_cv_rect_t2, img_cv_rect_t2,-1, kernel2);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t, 5, 255, cv::THRESH_BINARY);
+
+//cv::imshow( "tresh 5", img_cv_rect_t );
+//cv::waitKey(1000);
+
+
+
+//cv::dilate(img_cv_rect_t,img_cv_rect_t2,kernel_dilate);
+////cv::imshow( "Dilate", img_cv_rect_t2 );
+////cv::waitKey(10000);
+
+
+////cv::morphologyEx(img_cv_rect_t,img_cv_rect_t2, cv::MORPH_OPEN, kernel_dilate);
+//cv::morphologyEx(img_cv_rect_t2,img_cv_rect_t, cv::MORPH_CLOSE, kernel_dilate);
+////cv::imshow( "Morph1", img_cv_rect_t );
+////cv::waitKey(1000);
+//cv::morphologyEx(img_cv_rect_t,img_cv_rect_t2, cv::MORPH_OPEN, kernel_dilate4);
+////cv::imshow( "Morph3", img_cv_rect_t2 );
+////cv::waitKey(1000);
+
+//cv::morphologyEx(img_cv_rect_t2,img_cv_rect_t, cv::MORPH_CLOSE, kernel_dilate4);
+
+//cv::erode(img_cv_rect_t,img_cv_rect_t,kernel_dilate);
+//cv::imshow( "erode", img_cv_rect_t );
+//cv::waitKey(1000);
+
+
+//cv::imshow( "Morph2", img_cv_rect_t );
+//cv::waitKey(1000);
+
+
+camera__[itmParameters][itmCapture][itmFrontLight] = false;
+camera__[itmParameters][itmCapture][itmProjector] = true;
+//camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+
+//{
+//	NxLibCommand cam(cmdCapture);
+//	cam.parameters()[itmTimeout] = 25000;
+//	cam.execute();
+
+//}
+//NxLibCommand (cmdCapture).execute();
+NxLibCommand (cmdComputeDisparityMap).execute();
+NxLibCommand (cmdComputePointMap).execute();
 
 if (capture_params__.flex_view > 1)
 {
@@ -338,10 +788,14 @@ if (capture_params__.flex_view > 1)
 
 }
 camera__[itmParameters][itmCapture][itmProjector] = true;
+camera__[itmParameters][itmCapture][itmAutoExposure] = false;
+camera__[itmParameters][itmCapture][itmAutoExposure] = false;
+camera__[itmParameters][itmCapture][itmExposure] = 3.0;
 {
 	NxLibCommand cam(cmdCapture);
 	cam.parameters()[itmTimeout] = 25000;
 	cam.execute();
+
 }
 //NxLibCommand (cmdCapture).execute();
 NxLibCommand (cmdComputeDisparityMap).execute();
@@ -399,7 +853,7 @@ NxLibCommand (cmdComputePointMap).execute();
 				_p_cloud.points.at(kk).x = px/1000.;
 				_p_cloud.points.at(kk).y = raw_points[(ii*_p_cloud.width + jj)*3 + 1]/1000.;
 				_p_cloud.points.at(kk).z = raw_points[(ii*_p_cloud.width + jj)*3 + 2]/1000.;
-				_p_cloud.points.at(kk).intensity = static_cast<int>(img_cv_rect_t.at<uchar>(ii*_p_cloud.width + jj));//raw_img[(ii*_p_cloud.width + jj)];//raw_img[kk];
+				_p_cloud.points.at(kk).intensity = static_cast<int>(img_cv_rect_t.at<float>(ii,jj));//raw_img[(ii*_p_cloud.width + jj)];//raw_img[kk];
 				//std::cout << static_cast<int>(img_cv_rect_t.at<uchar>(ii*_p_cloud.width + jj)) << std::endl;
 				kk++;
 			}
