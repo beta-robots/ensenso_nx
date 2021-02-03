@@ -235,7 +235,7 @@ bool EnsensoNxNode::grabCloudGrayScale()
 	int good_result = 1;
 	std::cout <<"graydeb1" << std::endl;
 	int result = camera__->capture(cloud_grayscale__);
-		std::cout <<"captured" << std::endl;
+	std::cout <<"captured" << std::endl;
 	if ( result == good_result )
 	{
 		ros::Time ts = ros::Time::now();
@@ -367,11 +367,7 @@ void EnsensoNxNode::advancedSnapshotCallback(const sensor_msgs::AdvancedSnapshot
 			pcl::toROSMsg(cloud, res.cloud);
 			pcl::toROSMsg(cloud_rgb, res.image);
 
-
-			std::cout << "ensenso_nx: Returning result! size_cloud:  "<< res.cloud.data.size() << std::endl;
-			std::cout << "ensenso_nx: Returning result! size_image:  "<< res.image.data.size() << std::endl;
 			snapshot_action__->setSucceeded(res);
-			std::cout << "result sended  " << std::endl;
 		}
 		else
 		{

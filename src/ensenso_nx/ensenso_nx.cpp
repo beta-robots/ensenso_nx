@@ -191,10 +191,12 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 
 
 		camera__[itmParameters][itmCapture][itmFlexView] = false;
+
+
 		try {
-			camera__[itmParameters][itmCapture][itmAbsoluteBlackLevelOffset] = "0";
+			camera__[itmParameters][itmCapture][itmExposure] = 6;
 		} catch (NxLibException& ex) {
-			ensensoExceptionHandling(ex,"deb1");
+			ensensoExceptionHandling(ex,"deb2");
 		}
 
 		try {
@@ -204,13 +206,13 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		}
 
 		try {
-		camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+		camera__[itmParameters][itmCapture][itmAutoExposure] = false;
 		} catch (NxLibException& ex) {
 			ensensoExceptionHandling(ex,"deb4");
 		}
 
 		try {
-			camera__[itmParameters][itmCapture][itmAutoGain] = false;
+			camera__[itmParameters][itmCapture][itmAutoGain] = true;
 		} catch (NxLibException& ex) {
 			ensensoExceptionHandling(ex,"deb4");
 		}
@@ -245,12 +247,6 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		camera__[itmParameters][itmCapture][itmFlashDelay] = -0.0500000000000000028;
 		} catch (NxLibException& ex) {
 			ensensoExceptionHandling(ex,"deb10");
-		}
-
-		try {
-		camera__[itmParameters][itmCapture][itmCapture][itmFlexView] = false;
-		} catch (NxLibException& ex) {
-			ensensoExceptionHandling(ex,"deb11");
 		}
 
 		try {
@@ -302,17 +298,6 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		}
 
 		try {
-		camera__[itmParameters][itmCapture][itmMaxFlashTime] = 10;
-		} catch (NxLibException& ex) {
-			ensensoExceptionHandling(ex,"deb20");
-		}
-		try {
-		camera__[itmParameters][itmCapture][itmMaxGain] = 4;
-		} catch (NxLibException& ex) {
-			ensensoExceptionHandling(ex,"deb21");
-		}
-
-		try {
 		camera__[itmParameters][itmCapture][itmMode] = "Rectified";
 		} catch (NxLibException& ex) {
 			ensensoExceptionHandling(ex,"deb22");
@@ -337,12 +322,6 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		}
 
 		try {
-		camera__[itmParameters][itmCapture][itmProjectorMinimumDutyCycle] = 0.05;
-		} catch (NxLibException& ex) {
-			ensensoExceptionHandling(ex,"deb26");
-		}
-
-		try {
 		camera__[itmParameters][itmCapture][itmTargetBrightness] = 80;
 		} catch (NxLibException& ex) {
 			ensensoExceptionHandling(ex,"deb27");
@@ -359,12 +338,6 @@ int Device::capture(pcl::PointCloud<pcl::PointXYZI> & _p_cloud)
 		camera__[itmParameters][itmCapture][itmTriggerMode] = "Software";
 		} catch (NxLibException& ex) {
 			ensensoExceptionHandling(ex,"deb29");
-		}
-
-		try {
-		camera__[itmParameters][itmCapture][itmTriggered] = false;
-		} catch (NxLibException& ex) {
-			ensensoExceptionHandling(ex,"deb30");
 		}
 
 		try {
@@ -398,85 +371,6 @@ camera__[itmImages][itmRectified][itmLeft].getBinaryDataInfo (0, 0, 0, 0, 0, &ti
 NxLibCommand (cmdRectifyImages).execute();
 sleep(1);
 camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, img_cv_rect_t, 0);
-
-/*temps*/
-//double extra_exp = 2.0;
-
-//	cv::Mat mat1, mat2, mat3, mat4, mat5, mat6, mat7, mat8, mat9, mat10, mat11, mat12, mat13, mat14, mat15, mat21, mat22, mat31;
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 0.5 + extra_exp;
-////	camera__[itmParameters][itmCapture][itmTimeout] = 25000;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-////	NxLibCommand (cmdComputePointMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat1, 0);
-//	exposures.push_back(0.5);
-//	usleep(25000);
-
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 1.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat2, 0);
-//	exposures.push_back(1.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 2.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat3, 0);
-//	exposures.push_back(2.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 3.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat4, 0);
-//	exposures.push_back(3.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 4.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat5, 0);
-//	exposures.push_back(4.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 5.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat6, 0);
-//	exposures.push_back(5.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 6.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat7, 0);
-//	exposures.push_back(6.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 7.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat8, 0);
-//	exposures.push_back(7.5);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 8.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat9, 0);
-//	exposures.push_back(0.2);
-//	usleep(25000);
-
-//	camera__[itmParameters][itmCapture][itmExposure] = 9.5 + extra_exp;
-//	NxLibCommand (cmdCapture).execute();
-//	NxLibCommand (cmdComputeDisparityMap).execute();
-//	camera__[itmImages][itmRectified][itmLeft].getBinaryData(&nx_return_code, mat10, 0);
-//	exposures.push_back(9.5);
-//	usleep(25000);
-/*temps*/
 
 
 //	cv::imshow( "1", mat1 );
@@ -646,6 +540,8 @@ cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
 
 cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel);
 
+
+
 //cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
 
 //cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
@@ -655,7 +551,11 @@ cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel);
 
 
 
+
 cv::Mat gx, gy, img_cv_rect_t2,  angle;
+
+
+
 
 cv::Sobel(img_cv_rect_t, gx, CV_32F, 1, 0, 1);
 cv::Sobel(img_cv_rect_t, gy, CV_32F, 0, 1, 1);
@@ -676,14 +576,31 @@ cv::cartToPolar(gx, gy,img_cv_rect_t, angle);
 //cv::waitKey(1000);
 
 
+
+
 /**trial**/
 cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
-//cv::threshold(img_cv_rect_t2, img_cv_rect_t, 7, 255, cv::THRESH_BINARY);
+
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t, -1, kernel);
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
+//cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel);
+
+//img_cv_rect_t2 = img_cv_rect_t;
+//cv::morphologyEx(img_cv_rect_t2,img_cv_rect_t2, cv::MORPH_DILATE, kernel_dilate);
+//img_cv_rect_t2.assignTo(img_cv_rect_t2,CV_8UC1);
+//cv::threshold(img_cv_rect_t2, img_cv_rect_t2, 0, 255, cv::THRESH_OTSU);
+//cv::imshow( "tresh 1", img_cv_rect_t2 );
+//cv::waitKey(1000);
+
+
+
+//img_cv_rect_t.assignTo(img_cv_rect_t,CV_8UC1);
+//cv::threshold(img_cv_rect_t, img_cv_rect_t, 0, 255, cv::THRESH_OTSU);
 /**trial**/
 
 
-//cv::imshow( "tresh 1", img_cv_rect_t );
-//cv::waitKey(1000);
+
 
 //cv::morphologyEx(img_cv_rect_t2,img_cv_rect_t2, cv::MORPH_OPEN, kernel_dilate4);
 
@@ -768,15 +685,33 @@ cv::filter2D(img_cv_rect_t, img_cv_rect_t,-1, kernel2);
 
 camera__[itmParameters][itmCapture][itmFrontLight] = false;
 camera__[itmParameters][itmCapture][itmProjector] = true;
-//camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+NxLibCommand (cmdEstimateDisparitySettings).execute();
 
-//{
-//	NxLibCommand cam(cmdCapture);
-//	cam.parameters()[itmTimeout] = 25000;
+try {
+camera__[itmParameters][itmCapture][itmHdr] = false;
+} catch (NxLibException& ex) {
+	ensensoExceptionHandling(ex,"de33");
+}
+camera__[itmParameters][itmCapture][itmGain] = 1;
+camera__[itmParameters][itmCapture][itmGainBoost] = false;
+camera__[itmParameters][itmCapture][itmPixelClock] = 43;
+camera__[itmParameters][itmCapture][itmMultiExposureFactor] = 2;
+{
+	NxLibCommand cam(cmdCapture);
+	cam.parameters()[itmTimeout] = 25000;
+	cam.execute();
+
+	NxLibCommand (cmdComputeDisparityMap).execute();
+	NxLibCommand (cmdComputePointMap).execute();
+
+
 //	cam.execute();
 
-//}
-//NxLibCommand (cmdCapture).execute();
+//	cam.execute();
+
+}
+NxLibCommand (cmdCapture).execute();
 NxLibCommand (cmdComputeDisparityMap).execute();
 NxLibCommand (cmdComputePointMap).execute();
 
@@ -784,13 +719,13 @@ if (capture_params__.flex_view > 1)
 {
 
 	camera__[itmParameters][itmCapture][itmFlexView] = static_cast<int>(capture_params__.flex_view);
-	camera__[itmParameters][itmCapture][itmGainBoost] = true;
+
 
 }
-camera__[itmParameters][itmCapture][itmProjector] = true;
-camera__[itmParameters][itmCapture][itmAutoExposure] = false;
-camera__[itmParameters][itmCapture][itmAutoExposure] = false;
-camera__[itmParameters][itmCapture][itmExposure] = 3.0;
+
+//camera__[itmParameters][itmCapture][itmProjector] = true;
+//camera__[itmParameters][itmCapture][itmAutoExposure] = true;
+//camera__[itmParameters][itmCapture][itmExposure] = 3.0;
 {
 	NxLibCommand cam(cmdCapture);
 	cam.parameters()[itmTimeout] = 25000;
@@ -841,7 +776,9 @@ NxLibCommand (cmdComputePointMap).execute();
 	//Move raw data to point cloud
 	_p_cloud.width = (unsigned int)ww;
 	_p_cloud.height = (unsigned int)hh;
+
 	_p_cloud.resize(_p_cloud.width*_p_cloud.height);
+
 	unsigned int kk = 0;
 	for(unsigned int ii = 0; ii<_p_cloud.height; ii++ )
 	{
@@ -990,7 +927,7 @@ void Device::configureCapture()
 
 	camera__[itmParameters][itmCapture][itmAutoGain] = capture_params__.auto_exposure;
 	camera__[itmParameters][itmCapture][itmExposure    ] = static_cast<double>(capture_params__.exposure_time); //TODO check if requires cast to double.
-	camera__[itmParameters][itmCapture][itmHdr] = true;
+	//camera__[itmParameters][itmCapture][itmHdr] = true;
 	camera__[itmParameters][itmCapture][itmMode] = "Rectified";
 
 //	camera__[itmParameters][itmDisparityMap][itmPostProcessing][itmFilling][itmBorderSpread] = 5;
@@ -1023,8 +960,10 @@ void Device::configureCapture()
 
 	}
 
-	if (capture_params__.flex_view > 8)
+	if (capture_params__.flex_view > 8){
 			camera__[itmParameters][itmDisparityMap][itmStereoMatching][itmMethod] = "Correlation";
+		camera__[itmParameters][itmDisparityMap][itmStereoMatching][itmWindowRadius] = 1;
+	}
 
 	std::cout << "finished configuring capture " <<  std::endl;
 
